@@ -4,12 +4,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
 import com.optit.logger.Logger;
+import com.optit.util.RandomIterator;
 
 /**
  * The ExecutorThread is a thread having one connection to the database
@@ -21,7 +21,7 @@ public class ExecutorThread extends Thread
 {
 	private static boolean ignoreErrors = false;
 	private Connection conn;
-	private LinkedList<String> sqls;
+	private List<String> sqls;
 	
 	private boolean stop = false;
 	
@@ -31,7 +31,7 @@ public class ExecutorThread extends Thread
 	 * @param sqls A List of all sqls that should be executed
 	 * @param ignoreErrs Flag that defines if errors caused by SQLs should force the thread to stop or not
 	 */
-	public ExecutorThread(Connection conn, LinkedList<String> sqls, boolean ignoreErrs)
+	public ExecutorThread(Connection conn, List<String> sqls, boolean ignoreErrs)
 	{
 		this.sqls = sqls;
 		this.conn = conn;
@@ -75,7 +75,7 @@ public class ExecutorThread extends Thread
 		while (!stop)
 		{
 			// Iterate over all SQLs
-			Iterator<String> iterator = sqls.iterator();
+			RandomIterator<String> iterator = new RandomIterator<String>(sqls);
 			
 			// Endless loop for SQLs until thread has to stop - loop will be broken by NoSuchElementException of the iterator
 			while (!stop)
