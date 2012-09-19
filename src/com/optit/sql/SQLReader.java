@@ -3,8 +3,8 @@ package com.optit.sql;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 
 import com.optit.logger.Logger;
 
@@ -29,12 +29,12 @@ public class SQLReader
 	
 	/**
 	 * Parses a file for SQLs. Each SQL needs to be delimited by \";\" The parser does NOT ignore non SQLs nor comments! 
-	 * @return a LinkedList containing all SQls of the file
+	 * @return a ArrayList containing all SQls of the file
 	 */
-	public LinkedList<String> parseSqlFile ()
+	public ArrayList<String> parseSqlFile ()
 	{
 		Logger.log("Parsing sql file");
-		LinkedList<String> returnList = new LinkedList<String>();
+		ArrayList<String> returnList = new ArrayList<String>();
 				
 		try
 		{

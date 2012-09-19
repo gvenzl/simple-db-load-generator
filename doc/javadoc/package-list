@@ -2,3 +2,4 @@ com.optit
 com.optit.execute
 com.optit.logger
 com.optit.sql
+com.optit.util

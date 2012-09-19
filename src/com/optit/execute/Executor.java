@@ -1,7 +1,7 @@
 package com.optit.execute;
 
 import java.sql.SQLException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -127,8 +127,8 @@ public class Executor
 			if (dbDataSource != null)
 			{
 	
-				// Parse all SQLs into a Linked (random) list 
-				LinkedList<String> sqls = new SQLReader(parameters.getProperty(Parameters.sqlfile)).parseSqlFile();
+				// Parse all SQLs into a ArrayList 
+				ArrayList<String> sqls = new SQLReader(parameters.getProperty(Parameters.sqlfile)).parseSqlFile();
 				
 				// Only execute tests if LinkedList is filled (not filled if parse error occurred)
 				if (!sqls.isEmpty())
