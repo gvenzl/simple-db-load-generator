@@ -1,0 +1,200 @@
+120612 17:09:27	 9796 Query	SET autocommit=0
+		 9796 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'TRIGGER_ACCESS' FOR UPDATE
+		 9796 Query	SET OPTION SQL_SELECT_LIMIT=1
+		 9796 Query	SELECT TRIGGER_NAME, TRIGGER_GROUP, NEXT_FIRE_TIME, PRIORITY FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'WAITING' AND NEXT_FIRE_TIME < 1339517403125 AND (NEXT_FIRE_TIME >= 1339517313126) ORDER BY NEXT_FIRE_TIME ASC, PRIORITY DESC
+		 9796 Query	SET OPTION SQL_SELECT_LIMIT=DEFAULT
+		 9796 Query	commit
+		 9796 Query	SET autocommit=1
+120612 17:09:44	 9796 Query	select 'true'
+		 9796 Query	SET autocommit=0
+		 9796 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		 9796 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517389931 WHERE INSTANCE_NAME = 'MYINSTANCE'
+		 9796 Query	commit
+		 9796 Query	commit
+		 9796 Query	SET autocommit=1
+120612 17:09:55	 9796 Query	SET autocommit=0
+		 9796 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'TRIGGER_ACCESS' FOR UPDATE
+		 9796 Query	SET OPTION SQL_SELECT_LIMIT=1
+		 9796 Query	SELECT TRIGGER_NAME, TRIGGER_GROUP, NEXT_FIRE_TIME, PRIORITY FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'WAITING' AND NEXT_FIRE_TIME < 1339517430651 AND (NEXT_FIRE_TIME >= 1339517340666) ORDER BY NEXT_FIRE_TIME ASC, PRIORITY DESC
+		 9796 Query	SET OPTION SQL_SELECT_LIMIT=DEFAULT
+		 9796 Query	commit
+		 9796 Query	SET autocommit=1
+120612 17:10:04	 9796 Query	SET autocommit=0
+		 9796 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		 9796 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517409983 WHERE INSTANCE_NAME = 'MYINSTANCE'
+		 9796 Query	commit
+		 9796 Query	commit
+		 9796 Query	SET autocommit=1
+120612 17:10:13	 9796 Query	SET autocommit=0
+		 9796 Query	SELECT COUNT(TRIGGER_NAME) FROM QRTZ_TRIGGERS WHERE NEXT_FIRE_TIME < 1339517359354 AND ((TRIGGER_STATE = 'MISFIRED') OR (TRIGGER_STATE = 'WAITING'))
+		 9796 Query	commit
+		 9796 Query	SET autocommit=1
+120612 17:10:20	 9796 Query	select 'true'
+		 9796 Query	SET autocommit=0
+		 9796 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'TRIGGER_ACCESS' FOR UPDATE
+		 9796 Query	SET OPTION SQL_SELECT_LIMIT=1
+		 9796 Query	SELECT TRIGGER_NAME, TRIGGER_GROUP, NEXT_FIRE_TIME, PRIORITY FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'WAITING' AND NEXT_FIRE_TIME < 1339517456273 AND (NEXT_FIRE_TIME >= 1339517366275) ORDER BY NEXT_FIRE_TIME ASC, PRIORITY DESC
+		 9796 Query	SET OPTION SQL_SELECT_LIMIT=DEFAULT
+		 9796 Query	commit
+		 9796 Query	SET autocommit=1
+120612 17:10:24	 9796 Query	SET autocommit=0
+		 9796 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		 9796 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517429975 WHERE INSTANCE_NAME = 'MYINSTANCE'
+		 9796 Query	commit
+		 9796 Query	commit
+		 9796 Query	SET autocommit=1
+120612 17:10:44	 9796 Query	SET autocommit=0
+		 9796 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		 9796 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517449967 WHERE INSTANCE_NAME = 'MYINSTANCE'
+		 9796 Query	commit
+		 9796 Query	commit
+		 9796 Query	SET autocommit=1
+120612 17:11:26	10421 Connect	root@myserver on devtest
+		10421 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SHOW VARIABLES WHERE Variable_name ='language' OR Variable_name = 'net_write_timeout' OR Variable_name = 'interactive_timeout' OR Variable_name = 'wait_timeout' OR Variable_name = 'character_set_client' OR Variable_name = 'character_set_connection' OR Variable_name = 'character_set' OR Variable_name = 'character_set_server' OR Variable_name = 'tx_isolation' OR Variable_name = 'transaction_isolation' OR Variable_name = 'character_set_results' OR Variable_name = 'timezone' OR Variable_name = 'time_zone' OR Variable_name = 'system_time_zone' OR Variable_name = 'lower_case_table_names' OR Variable_name = 'max_allowed_packet' OR Variable_name = 'net_buffer_length' OR Variable_name = 'sql_mode' OR Variable_name = 'query_cache_type' OR Variable_name = 'query_cache_size' OR Variable_name = 'init_connect'
+120612 17:11:27	10421 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SELECT @@session.auto_increment_increment
+		10421 Query	SHOW COLLATION
+		10421 Query	SET character_set_results = NULL
+		10421 Query	SET autocommit=1
+		10421 Query	SET sql_mode='STRICT_TRANS_TABLES'
+		10422 Connect	root@myserver on devtest
+		10422 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SHOW VARIABLES WHERE Variable_name ='language' OR Variable_name = 'net_write_timeout' OR Variable_name = 'interactive_timeout' OR Variable_name = 'wait_timeout' OR Variable_name = 'character_set_client' OR Variable_name = 'character_set_connection' OR Variable_name = 'character_set' OR Variable_name = 'character_set_server' OR Variable_name = 'tx_isolation' OR Variable_name = 'transaction_isolation' OR Variable_name = 'character_set_results' OR Variable_name = 'timezone' OR Variable_name = 'time_zone' OR Variable_name = 'system_time_zone' OR Variable_name = 'lower_case_table_names' OR Variable_name = 'max_allowed_packet' OR Variable_name = 'net_buffer_length' OR Variable_name = 'sql_mode' OR Variable_name = 'query_cache_type' OR Variable_name = 'query_cache_size' OR Variable_name = 'init_connect'
+		10422 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SELECT @@session.auto_increment_increment
+		10422 Query	SHOW COLLATION
+		10422 Query	SET character_set_results = NULL
+		10422 Query	SET autocommit=1
+		10422 Query	SET sql_mode='STRICT_TRANS_TABLES'
+		10422 Query	SET autocommit=0
+		10422 Query	commit
+		10422 Query	SET autocommit=1
+		10422 Query	SET autocommit=0
+		10422 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'STATE_ACCESS' FOR UPDATE
+		10422 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		10422 Query	SELECT DISTINCT INSTANCE_NAME FROM QRTZ_FIRED_TRIGGERS
+		10422 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517493057 WHERE INSTANCE_NAME = 'myserver1339517492937'
+		10422 Query	INSERT INTO QRTZ_SCHEDULER_STATE (INSTANCE_NAME, LAST_CHECKIN_TIME, CHECKIN_INTERVAL) VALUES('myserver1339517492937', 1339517493057, 20000)
+		10422 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'TRIGGER_ACCESS' FOR UPDATE
+		10422 Query	SELECT * FROM QRTZ_FIRED_TRIGGERS WHERE INSTANCE_NAME = 'MYINSTANCE'
+		10422 Query	DELETE FROM QRTZ_FIRED_TRIGGERS WHERE INSTANCE_NAME = 'MYINSTANCE'
+		10422 Query	DELETE FROM QRTZ_SCHEDULER_STATE WHERE INSTANCE_NAME = 'MYINSTANCE'
+		10422 Query	commit
+		10422 Query	SET autocommit=1
+		10422 Query	SET autocommit=0
+		10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'TRIGGER_ACCESS' FOR UPDATE
+		10422 Query	SELECT COUNT(TRIGGER_NAME) FROM QRTZ_TRIGGERS WHERE NEXT_FIRE_TIME < 1339517433086 AND ((TRIGGER_STATE = 'MISFIRED') OR (TRIGGER_STATE = 'WAITING'))
+		10422 Query	commit
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=1
+		10422 Query	SET autocommit=1
+		10421 Query	SELECT TRIGGER_NAME, TRIGGER_GROUP, NEXT_FIRE_TIME, PRIORITY FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'WAITING' AND NEXT_FIRE_TIME < 1339517523073 AND (NEXT_FIRE_TIME >= 1339517433087) ORDER BY NEXT_FIRE_TIME ASC, PRIORITY DESC
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=DEFAULT
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:11:46	10423 Connect	root@myserver on devtest
+		10423 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SHOW VARIABLES WHERE Variable_name ='language' OR Variable_name = 'net_write_timeout' OR Variable_name = 'interactive_timeout' OR Variable_name = 'wait_timeout' OR Variable_name = 'character_set_client' OR Variable_name = 'character_set_connection' OR Variable_name = 'character_set' OR Variable_name = 'character_set_server' OR Variable_name = 'tx_isolation' OR Variable_name = 'transaction_isolation' OR Variable_name = 'character_set_results' OR Variable_name = 'timezone' OR Variable_name = 'time_zone' OR Variable_name = 'system_time_zone' OR Variable_name = 'lower_case_table_names' OR Variable_name = 'max_allowed_packet' OR Variable_name = 'net_buffer_length' OR Variable_name = 'sql_mode' OR Variable_name = 'query_cache_type' OR Variable_name = 'query_cache_size' OR Variable_name = 'init_connect'
+		10423 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SELECT @@session.auto_increment_increment
+		10423 Query	SHOW COLLATION
+		10423 Query	SET character_set_results = NULL
+		10423 Query	SET autocommit=1
+		10423 Query	SET sql_mode='STRICT_TRANS_TABLES'
+		10424 Connect	root@myserver on devtest
+		10424 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SHOW VARIABLES WHERE Variable_name ='language' OR Variable_name = 'net_write_timeout' OR Variable_name = 'interactive_timeout' OR Variable_name = 'wait_timeout' OR Variable_name = 'character_set_client' OR Variable_name = 'character_set_connection' OR Variable_name = 'character_set' OR Variable_name = 'character_set_server' OR Variable_name = 'tx_isolation' OR Variable_name = 'transaction_isolation' OR Variable_name = 'character_set_results' OR Variable_name = 'timezone' OR Variable_name = 'time_zone' OR Variable_name = 'system_time_zone' OR Variable_name = 'lower_case_table_names' OR Variable_name = 'max_allowed_packet' OR Variable_name = 'net_buffer_length' OR Variable_name = 'sql_mode' OR Variable_name = 'query_cache_type' OR Variable_name = 'query_cache_size' OR Variable_name = 'init_connect'
+		10424 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SELECT @@session.auto_increment_increment
+		10424 Query	SHOW COLLATION
+		10424 Query	SET character_set_results = NULL
+		10424 Query	SET autocommit=1
+		10424 Query	SET sql_mode='STRICT_TRANS_TABLES'
+120612 17:11:47	10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		10421 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517513049 WHERE INSTANCE_NAME = 'myserver1339517492937'
+		10421 Query	commit
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:11:52	10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'TRIGGER_ACCESS' FOR UPDATE
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=1
+		10421 Query	SELECT TRIGGER_NAME, TRIGGER_GROUP, NEXT_FIRE_TIME, PRIORITY FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'WAITING' AND NEXT_FIRE_TIME < 1339517547996 AND (NEXT_FIRE_TIME >= 1339517458018) ORDER BY NEXT_FIRE_TIME ASC, PRIORITY DESC
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=DEFAULT
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:12:07	10421 Query	select 'true'
+		10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		10421 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517533155 WHERE INSTANCE_NAME = 'myserver1339517492937'
+		10421 Query	commit
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:12:22	10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'TRIGGER_ACCESS' FOR UPDATE
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=1
+		10421 Query	SELECT TRIGGER_NAME, TRIGGER_GROUP, NEXT_FIRE_TIME, PRIORITY FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'WAITING' AND NEXT_FIRE_TIME < 1339517577716 AND (NEXT_FIRE_TIME >= 1339517487719) ORDER BY NEXT_FIRE_TIME ASC, PRIORITY DESC
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=DEFAULT
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:12:27	10421 Query	SET autocommit=0
+		10421 Query	SELECT COUNT(TRIGGER_NAME) FROM QRTZ_TRIGGERS WHERE NEXT_FIRE_TIME < 1339517493041 AND ((TRIGGER_STATE = 'MISFIRED') OR (TRIGGER_STATE = 'WAITING'))
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+		10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		10421 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517553147 WHERE INSTANCE_NAME = 'myserver1339517492937'
+		10421 Query	commit
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:12:48	10421 Query	select 'true'
+		10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		10421 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517573326 WHERE INSTANCE_NAME = 'myserver1339517492937'
+		10421 Query	commit
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:12:51	10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'TRIGGER_ACCESS' FOR UPDATE
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=1
+		10421 Query	SELECT TRIGGER_NAME, TRIGGER_GROUP, NEXT_FIRE_TIME, PRIORITY FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'WAITING' AND NEXT_FIRE_TIME < 1339517606705 AND (NEXT_FIRE_TIME >= 1339517516707) ORDER BY NEXT_FIRE_TIME ASC, PRIORITY DESC
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=DEFAULT
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:13:01	10425 Connect	root@myserver on devtest
+		10425 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SHOW VARIABLES WHERE Variable_name ='language' OR Variable_name = 'net_write_timeout' OR Variable_name = 'interactive_timeout' OR Variable_name = 'wait_timeout' OR Variable_name = 'character_set_client' OR Variable_name = 'character_set_connection' OR Variable_name = 'character_set' OR Variable_name = 'character_set_server' OR Variable_name = 'tx_isolation' OR Variable_name = 'transaction_isolation' OR Variable_name = 'character_set_results' OR Variable_name = 'timezone' OR Variable_name = 'time_zone' OR Variable_name = 'system_time_zone' OR Variable_name = 'lower_case_table_names' OR Variable_name = 'max_allowed_packet' OR Variable_name = 'net_buffer_length' OR Variable_name = 'sql_mode' OR Variable_name = 'query_cache_type' OR Variable_name = 'query_cache_size' OR Variable_name = 'init_connect'
+		10425 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SELECT @@session.auto_increment_increment
+		10425 Query	SHOW COLLATION
+		10425 Query	SET character_set_results = NULL
+		10425 Query	SET autocommit=1
+		10425 Query	SET sql_mode='STRICT_TRANS_TABLES'
+		10426 Connect	root@myserver on devtest
+		10426 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SHOW VARIABLES WHERE Variable_name ='language' OR Variable_name = 'net_write_timeout' OR Variable_name = 'interactive_timeout' OR Variable_name = 'wait_timeout' OR Variable_name = 'character_set_client' OR Variable_name = 'character_set_connection' OR Variable_name = 'character_set' OR Variable_name = 'character_set_server' OR Variable_name = 'tx_isolation' OR Variable_name = 'transaction_isolation' OR Variable_name = 'character_set_results' OR Variable_name = 'timezone' OR Variable_name = 'time_zone' OR Variable_name = 'system_time_zone' OR Variable_name = 'lower_case_table_names' OR Variable_name = 'max_allowed_packet' OR Variable_name = 'net_buffer_length' OR Variable_name = 'sql_mode' OR Variable_name = 'query_cache_type' OR Variable_name = 'query_cache_size' OR Variable_name = 'init_connect'
+		10426 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SELECT @@session.auto_increment_increment
+		10426 Query	SHOW COLLATION
+120612 17:13:02	10426 Query	SET character_set_results = NULL
+		10426 Query	SET autocommit=1
+		10426 Query	SET sql_mode='STRICT_TRANS_TABLES'
+		10425 Query	SELECT 1
+120612 17:13:03	10425 Query	SHOW WARNINGS
+		10426 Query	SELECT 1
+		10426 Query	SHOW WARNINGS
+120612 17:13:08	10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_SCHEDULER_STATE
+		10421 Query	UPDATE QRTZ_SCHEDULER_STATE SET LAST_CHECKIN_TIME = 1339517593341 WHERE INSTANCE_NAME = 'myserver1339517492937'
+		10421 Query	commit
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:13:17	10421 Query	SET autocommit=0
+		10421 Query	SELECT * FROM QRTZ_LOCKS WHERE LOCK_NAME = 'TRIGGER_ACCESS' FOR UPDATE
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=1
+		10421 Query	SELECT TRIGGER_NAME, TRIGGER_GROUP, NEXT_FIRE_TIME, PRIORITY FROM QRTZ_TRIGGERS WHERE TRIGGER_STATE = 'WAITING' AND NEXT_FIRE_TIME < 1339517633094 AND (NEXT_FIRE_TIME >= 1339517543097) ORDER BY NEXT_FIRE_TIME ASC, PRIORITY DESC
+		10421 Query	SET OPTION SQL_SELECT_LIMIT=DEFAULT
+		10421 Query	commit
+		10421 Query	SET autocommit=1
+120612 17:13:19	10427 Connect	root@myserver on test
+		10427 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SHOW VARIABLES WHERE Variable_name ='language' OR Variable_name = 'net_write_timeout' OR Variable_name = 'interactive_timeout' OR Variable_name = 'wait_timeout' OR Variable_name = 'character_set_client' OR Variable_name = 'character_set_connection' OR Variable_name = 'character_set' OR Variable_name = 'character_set_server' OR Variable_name = 'tx_isolation' OR Variable_name = 'transaction_isolation' OR Variable_name = 'character_set_results' OR Variable_name = 'timezone' OR Variable_name = 'time_zone' OR Variable_name = 'system_time_zone' OR Variable_name = 'lower_case_table_names' OR Variable_name = 'max_allowed_packet' OR Variable_name = 'net_buffer_length' OR Variable_name = 'sql_mode' OR Variable_name = 'query_cache_type' OR Variable_name = 'query_cache_size' OR Variable_name = 'init_connect'
+		10427 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SELECT @@session.auto_increment_increment
+		10427 Query	SHOW COLLATION
+		10427 Query	SET NAMES latin1
+		10427 Query	SET character_set_results = NULL
+		10427 Query	SET autocommit=1
+		10427 Query	SET sql_mode='STRICT_TRANS_TABLES'
+120612 17:13:20	10427 Quit	
+		10428 Connect	root@myserver on test
+		10428 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SHOW VARIABLES WHERE Variable_name ='language' OR Variable_name = 'net_write_timeout' OR Variable_name = 'interactive_timeout' OR Variable_name = 'wait_timeout' OR Variable_name = 'character_set_client' OR Variable_name = 'character_set_connection' OR Variable_name = 'character_set' OR Variable_name = 'character_set_server' OR Variable_name = 'tx_isolation' OR Variable_name = 'transaction_isolation' OR Variable_name = 'character_set_results' OR Variable_name = 'timezone' OR Variable_name = 'time_zone' OR Variable_name = 'system_time_zone' OR Variable_name = 'lower_case_table_names' OR Variable_name = 'max_allowed_packet' OR Variable_name = 'net_buffer_length' OR Variable_name = 'sql_mode' OR Variable_name = 'query_cache_type' OR Variable_name = 'query_cache_size' OR Variable_name = 'init_connect'
+		10428 Query	/* mysql-connector-java-5.1.13 ( Revision: ${bzr.revision-id} ) */SELECT @@session.auto_increment_increment
+		10428 Query	SHOW COLLATION
