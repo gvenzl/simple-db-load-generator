@@ -2,7 +2,7 @@ package com.optit.logger;
 
 /**
  * The Logger is used as an interface for logging information
- * @author Gerald Venzl
+ * @author gvenzl
  *
  */
 public class Logger

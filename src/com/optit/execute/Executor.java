@@ -128,38 +128,46 @@ public class Executor
 			{
 	
 				// Parse all SQLs into a ArrayList 
-				ArrayList<String> sqls = new SQLReader(parameters.getProperty(Parameters.sqlfile)).parseSqlFile();
-				
-				// Only execute tests if LinkedList is filled (not filled if parse error occurred)
-				if (!sqls.isEmpty())
+				try
 				{
-					// Start and execute load threads
-					int sessions = Integer.valueOf(parameters.getProperty(Parameters.sessions)).intValue();
-					Logger.log("Starting concurrent sessions: " + sessions);
+					ArrayList<String> sqls = new SQLReader(parameters.getProperty(Parameters.sqlfile)).parseSqlFile();
 					
-					ExecutorThread[] threads = new ExecutorThread[sessions];
-					for (int iSession=0;iSession<sessions;iSession++)
+					// Only execute tests if LinkedList is filled (not filled if parse error occurred)
+					if (!sqls.isEmpty())
 					{
-						threads[iSession] = new ExecutorThread(dbDataSource.getConnection(), sqls, Boolean.valueOf(parameters.getProperty(Parameters.ignoreErrors)).booleanValue());
-						threads[iSession].setName("SQL-Loader");
-						threads[iSession].start();
-					}
-					
-					// Add shutdown hook for Ctrl+C capture
-					Runtime.getRuntime().addShutdownHook(new ShutDown(threads));
-					
-					// Wait for all threads to finish
-					for (int iThread=0;iThread<threads.length;iThread++)
-					{
-						try
+						// Start and execute load threads
+						int sessions = Integer.valueOf(parameters.getProperty(Parameters.sessions)).intValue();
+						Logger.log("Starting concurrent sessions: " + sessions);
+						
+						ExecutorThread[] threads = new ExecutorThread[sessions];
+						for (int iSession=0;iSession<sessions;iSession++)
 						{
-							threads[iThread].join();
+							threads[iSession] = new ExecutorThread(dbDataSource.getConnection(), sqls, Boolean.valueOf(parameters.getProperty(Parameters.ignoreErrors)).booleanValue());
+							threads[iSession].setName("SQL-Loader");
+							threads[iSession].start();
 						}
-						catch (InterruptedException e)
+						
+						// Add shutdown hook for Ctrl+C capture
+						Runtime.getRuntime().addShutdownHook(new ShutDown(threads));
+						
+						// Wait for all threads to finish
+						for (int iThread=0;iThread<threads.length;iThread++)
 						{
-							// Ignore thread interrupt!
+							try
+							{
+								threads[iThread].join();
+							}
+							catch (InterruptedException e)
+							{
+								// Ignore thread interrupt!
+							}
 						}
 					}
+				}
+				catch (Exception e)
+				{
+					Logger.log("Error during SQL file parsing: " + e.getMessage());
+					e.printStackTrace(System.err);
 				}
 			}
 			

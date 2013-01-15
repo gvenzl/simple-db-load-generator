@@ -1,5 +1,7 @@
 package com.optit.test;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 
 import org.junit.Test;
@@ -15,18 +17,33 @@ public class SQLReaderTest extends TestCase
 	@Test
 	public void test_SqlReader() throws Exception
 	{
-		new SQLReader("");
+		new SQLReader("allSqls.sql");
 	}
 	
 	@Test
-	public void test_parseSqlFile() throws Exception
+	public void test_parseTextSqlFile()
+		throws Exception
 	{
-		new SQLReader("allSqls.sql").parseSqlFile();
+		// Amount of SQLs in test file
+		final int expectedParsedSQLs = 50;
+		ArrayList<String> sqls =new SQLReader("allSqls.sql").parseSqlFile();
+		
+		assertEquals(expectedParsedSQLs, sqls.size());
 	}
 	
 	@Test
-	public void test_negative_parseSqlFile() throws Exception
+	public void test_parseMySqlGeneralLogFile()
+		throws Exception
 	{
-		new SQLReader("").parseSqlFile();
+		// Amount of valid/supported SQLs in test file
+		final int expectedValidSQLs = 91;
+		ArrayList<String> sqls = new SQLReader("mysql.general.log").parseSqlFile();
+		
+		assertEquals(expectedValidSQLs, sqls.size());
+	}
+	
+	public void test_negative_SqlReader()
+	{
+		try { new SQLReader(""); } catch (Exception e) {};
 	}
 }
