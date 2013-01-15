@@ -5,7 +5,7 @@
 	</description>
 	<!-- set global properties for this build -->
 	<property name="projectname" value="SimpleLoadGenerator"/>
-	<property name="version" value="1.0.1"/>
+	<property name="version" value="1.1.0"/>
 	<property name="dir.src" location="src"/>
 	<property name="dir.build" location="out"/>
 	<property name="dir.doc" location="doc"/>

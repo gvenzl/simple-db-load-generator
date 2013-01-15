@@ -2,10 +2,13 @@ SimpleLoadGenerator - (c) Gerald Venzl
 
 Content:
 
-1. Purpose
-2. Concept
-3. Build
-4. Running SimpleLoadGenerator
+1.  Purpose
+2.  Concept
+2.1 Plain text file re-execution
+2.2 MySQL general log file re-execution
+2.3 Oracle trace file re-execution
+3.  Build
+4.  Running SimpleLoadGenerator
 
 1. Purpose:
 
@@ -14,26 +17,169 @@ It uses a user defined set of SQL statements which can executed in a single or m
 
 2. Concept:
 
-SimpleLoadGenerator was born out of the need to replay some production system SQL statements against a test database.
+SimpleLoadGenerator was born out of the need to re-execute some production system SQL statements against a test database.
 The SQL statements were provided via a database trace file which then got trimmed down to the actual SQL statements.
 
-The design is therefore based on reading a plain text file which contains SQL statements.
-It recognizes every byte in the file as part of a SQL statement until a ";" is encountered which delimits the current SQL statement from the next one.
+The original design was based on reading a plain text file which contains SQL statements.
+SimpleLoadGenerator recognizes every byte in the file as part of a SQL statement until a ";" is encountered which delimits the current SQL statement from the next one.
 SimpleLoadGenerator does not handle escaped ";" right now which means that your SQL statement must not contain a ";" anywhere inside it.
+
+With version 1.1.0 came the improvement to read MySQL general log and Oracle trace files. This improvement was intended to make it
+easier for the user to re-execute a SQL load without having to extract the SQLs into a plain file first.
+However, by re-executing trace files there is a danger of re-executing some internal or recursive SQL commands that should or must not be executed.
+Because of that danger not all SQLs will be plainly re-executed as it is the case with plain text files! 
 
 The application parses the entire SQL file and keeps all the SQL statements in memory which then get executed by one or more database sessions (configurable).
 The SQL statements are executed in RANDOM order and the execution of the next statement is paused for a random generated number between 0 and 1000 milliseconds.
-This is done to simulate a more realistic user load. Once all the statements are executed the application starts over again, ultimately producing an infinite loop.
+This is done to simulate a more realistic SQL load. Also, SimpleLoadGenerator detects SELECT statements and automatically fetches all rows of the SELECT being executed.
+This too is done to simulate a more realistic SQL load.
+Once all the statements are executed the application starts over again, ultimately producing an infinite loop.
 Only a kill signal ([Ctrl]+[C]) or an error (in case the -ignoreErrors flag isn't set - see below) will cause the application to stop gracefully
 by stopping the execution after the current statement has been finished and closing the connection.
 
+2.1 Plain text file re-execution
+
 SimpleLoadGenerator will execute whatever is in the text file. This means that it is also very flexible and not only constrained to SELECT statements.
-If the text file contains INSERT/UPDATE/DELETE statements the application WILL NOT execute a commit automatically.
-If you want your load to be committed, you will have to put "COMMIT;" at the appropriate place within the file!
+In case that the text file contains INSERT/UPDATE/DELETE statements that would start transactions, the application WILL NOT execute a commit automatically.
+If a commit needs to be executed, it will have to be in the text file as "COMMIT;" at the appropriate place within the file!
 The application will also not execute a rollback at the end of each test cycle which could cause the UNDO tablespace on an Oracle database to grow significantly.
 It is believed that if WRITE loads are simulated, the user also wants to commit them, e.g. batch load simulation
 
-SimpleLoadGenerator detects SELECT statements and automatically fetches all rows after one has been executed. This is also done to produce a more realistic load.
+2.2 MySQL general log file re-execution:
+The MySQL general log file is a plain text of binary file containing SQL command executions. SimpleLoadGenerator only supports the plain text mode!
+The general log file has two different formats of lines. Whenever the time between the last and current execution changes for a second or more,
+the date and time will be printed first, then followed by the thread id, command type and SQL command text.
+
+The format looks like this ([\t] representing a tabulator character):
+[Date][Space][Time][\t][ThreadId][Space][CommandType][\t][Sql Text][\n]
+[\t][\t][ThreadId][Space][CommandType][\t][Sql Text][\n]
+
+Regular expressions are used to parse those two lines accordingly. The used expressions are:
+"\\d{6} \\d{2}:\\d{2}:\\d{2}\\t\\s?\\d{1,5} (\\w+)\\t?(.+$)"
+"\\t{2}\\s?\\d{1,5} (\\w+)\\t?(.+$)"
+
+MySQL lists following command types:
+  "Sleep"
+  "Quit"
+  "Init DB"
+  "Query"
+  "Field List"
+  "Create DB"
+  "Drop DB"
+  "Refresh"
+  "Shutdown"
+  "Statistics"
+  "Processlist"
+  "Connect"
+  "Kill"
+  "Debug"
+  "Ping"
+  "Time"
+  "Delayed insert"
+  "Change user"
+  "Binlog Dump"
+  "Table Dump"
+  "Connect Out"
+  "Register Slave"
+  "Prepare"
+  "Execute"
+  "Long Data"
+  "Close stmt"
+  "Reset stmt"
+  "Set option"
+  "Fetch"
+  "Daemon"
+  "Error"
+
+SimpleLoadGenerator supports following of those SQL command types:
+  "Query"
+  "Delayed insert"
+  "Prepare"
+  "Execute"
+  "Close stmt"
+  "Reset stmt"
+  "Fetch"
+
+Supported Query commands:
+  CALL
+  DELETE
+  INSERT 
+  LOAD DATA INFILE 
+  LOAD XML 
+  REPLACE 
+  SELECT 
+  UPDATE
+ Transaction Controlling statements
+  START TRANSACTION
+  COMMIT
+  ROLLBACK
+  SAVEPOINT
+  ROLLBACK [WORK] TO
+  RELEASE SAVEPOINT
+  LOCK TABLES
+  UNLOCK TABLES
+
+Supported Prepare commands:
+  PREPARE
+  DEALLOCATE PREPARE
+  DROP PREPARE
+ 
+Supported Execute commands:
+  EXECUTE
+
+Non-supported Query commands:
+  DO
+  HANDLER 
+  SET AUTOCOMMIT
+  SET TRANSACTION
+ Controlling Master Servers Statements
+  PURGE BINARY LOGS
+  RESET MASTER
+  SET sql_log_bin
+ Controlling Slave Servers Statements
+  CHANGE MASTER TO
+  MASTER_POS_WAIT()
+  RESET SLAVE
+  SET GLOBAL sql_slave_skip_counter
+  START SLAVE
+  STOP SLAVE
+
+Non-supported Compound-Statement Syntax:
+  BEGIN ... END
+  DECLARE
+
+Other Non-supported commands:
+  ALTER USER
+  CREATE USER
+  DROP USER
+  GRANT
+  RENAME USER
+  REVOKE
+  SET PASSWORD
+  ANALYZE TABLE
+  CHECK TABLE
+  CHECKSUM TABLE
+  OPTIMIZE TABLE
+  REPAIR TABLE
+  CREATE FUNCTION
+  DROP FUNCTION
+  INSTALL PLUGIN
+  UNINSTALL PLUGIN
+  SET
+  SHOW
+  BINLOG
+  CACHE INDEX
+  FLUSH
+  KILL
+  LOAD INDEX INTO CACHE
+  RESET
+  DESCRIBE
+  EXPLAIN
+  HELP
+  USE
+
+2.3 Oracle trace file re-execution:
+//TODO: Add Oracle trace file support
 
 3. Build
 
