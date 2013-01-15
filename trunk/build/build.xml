@@ -41,7 +41,8 @@
 	</target>
 
 	<target name="unitTest" depends="compile" description="Executes JUnit tests">
-		<junit fork="yes" haltonfailure="true" haltonerror="true" maxmemory="512m">
+		<junit fork="yes" maxmemory="512m" dir ="${basedir}"
+			haltonfailure="true" haltonerror="true">
 				<jvmarg value="-Xms128m"/>
 				<jvmarg value="-XX:NewSize=120m"/>
 			<test name="${test.class.name}" />
