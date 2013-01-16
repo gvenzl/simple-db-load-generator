@@ -22,10 +22,11 @@ import com.optit.logger.Logger;
 public class SQLReader
 {
 	private final Path sqlFilePath;
+	private ArrayList<String> sqlList;
 	
 	/***************************** MYSQL specific variables *************************/
-	private static final String MYSQLDATETIMEPATTERN = "\\d{6} \\d{2}:\\d{2}:\\d{2}\\t\\s?\\d{1,5} (\\w+)\\t?(.+$)";
-	private static final String MYSQLSAMETIMEPATTERN = "\\t{2}\\s?\\d{1,5} (\\w+)\\t?(.+$)";
+	private static final String MYSQLDATETIMEPATTERN = "\\d{6} \\d{2}:\\d{2}:\\d{2}\\t\\s*\\d* (\\w+)\\t?(.+$)";
+	private static final String MYSQLSAMETIMEPATTERN = "\\t{2}\\s*\\d* (\\w+)\\t?(.+$)";
 	private static final String MYSQLSQLCOMMENTPATTERN = "(/\\* .* \\*/)(.*)";
 	public static final String[] MYSQLSUPPORTEDCOMMANDTYPES = { "QUERY", "DELAYED INSERT", "PREPARE", "EXECUTE", "CLOSE STMT", "RESET STMT", "FETCH" };
 	public static final String[] MYSQLSUPPORTEDCOMMANDS =
@@ -52,11 +53,16 @@ public class SQLReader
 		
 		// Multiple files are not supported yet, therefore no directory can be specified!
 		if (Files.isDirectory(sqlFilePath, new LinkOption[] {}))
+		{
 			throw new Exception("The passed file " + sqlFilePath.toAbsolutePath().toString() + " is a directory!" +
 									"Executing multiple files is not supported yet but planned for the future!");
+		}
 		// File not readable
 		else if (!Files.isReadable(sqlFilePath))
+		{
 			throw new Exception("File " + sqlFilePath.toAbsolutePath().toString() + " is not readable!");
+		}
+		this.sqlList = new ArrayList<String>();
 	}
 	
 	/**
@@ -67,8 +73,7 @@ public class SQLReader
 	public ArrayList<String> parseSqlFile ()
 	{
 		Logger.log("Parsing sql file");
-		ArrayList<String> returnList = new ArrayList<String>();
-				
+
 		try
 		{
 			// Read file (using new Java 7 NIO)
@@ -100,14 +105,11 @@ public class SQLReader
 			// Text file pattern
 			Pattern textFilePattern = Pattern.compile(TEXTFILEPATTERN);
 			
-			// Loop over array - use for loop rather than foreach for error line tracking!
+			// Loop over array - use for loop rather than for-each for error line tracking!
 			int iErrorCount = 0;
 			String[] lines = fileContent.trim().split(separator);
 			for (int iLineNumber=0; iLineNumber<lines.length; iLineNumber++)
 			{
-				String sql = "";
-				String commandType = "";
-				
 				
 				// Create matchers for both MySql RegEx patterns for current line
 				Matcher mySqlDateMatcher = mySqlDateTimePattern.matcher(lines[iLineNumber]);
@@ -121,24 +123,12 @@ public class SQLReader
 				// MySql Date line matches
 				if (mySqlDateMatcher.matches())
 				{
-					commandType = mySqlDateMatcher.replaceAll("$1");
-					sql = mySqlDateMatcher.replaceAll("$2");
-					
-					if (isSupportedMySqlCommand(commandType, sql))
-					{
-						returnList.add(sql);
-					}
+					addMySqlCommand(mySqlDateMatcher.replaceAll("$1"), mySqlDateMatcher.replaceAll("$2"));
 				}
-				// Non-date line matches
-				else if (mySqlSameMatcher.matches())
+				// MySql Non-date line matches
+				else if(mySqlSameMatcher.matches())
 				{
-					commandType = mySqlSameMatcher.replaceAll("$1");
-					sql = mySqlSameMatcher.replaceAll("$2");
-					
-					if (isSupportedMySqlCommand(commandType, sql))
-					{
-						returnList.add(sql);
-					}
+					addMySqlCommand(mySqlSameMatcher.replaceAll("$1"), mySqlSameMatcher.replaceAll("$2"));
 				}
 				//TODO: Oracle trace file parsing
 				// Oracle trace file line matches
@@ -148,11 +138,11 @@ public class SQLReader
 				}*/
 				else if (textFileMatcher.matches())
 				{
-					returnList.add(textFileMatcher.replaceAll("$1"));
+					sqlList.add(textFileMatcher.replaceAll("$1"));
 				}
 				else
 				{
-					Logger.log("Line " + iLineNumber + " could not be parsed: " + lines[iLineNumber]);
+					Logger.log("Line " + (iLineNumber-1) + " could not be parsed: " + lines[iLineNumber]);
 					iErrorCount++;
 					
 					// If too many errors, abort!
@@ -160,14 +150,14 @@ public class SQLReader
 					{
 						Logger.log("It seems tht the file format of this SQL file is either invalid or currently not supported!\n" +
 								"If you want that file format supported, please open an enhacement request under http://sourceforge.net/projects/simpleloadgener/ or email the project owner!");
-						returnList.clear();
+						sqlList.clear();
 						break;
 					}
 				}
 			}
 
 			Logger.log("Lines parsed: " + lines.length);
-			Logger.log("Amount of valid SQLs parsed: " + returnList.size());
+			Logger.log("Amount of valid SQLs parsed: " + sqlList.size());
 		}
 		catch (IOException e)
 		{
@@ -175,7 +165,7 @@ public class SQLReader
 			Logger.log(e.getMessage());
 		}
 		
-		return returnList;
+		return sqlList;
 	}
 	
 	/**
@@ -207,5 +197,13 @@ public class SQLReader
 		}
 		
 		return false;
+	}
+	
+	private void addMySqlCommand(String commandType, String command)
+	{
+		if (isSupportedMySqlCommand(commandType, command))
+		{
+			sqlList.add(command.replaceAll("`", ""));
+		}
 	}
 }
