@@ -20,7 +20,7 @@ public class SimpleLoadGenerator
 	 */
 	public static void printHelp()
 	{
-		Logger.log("Usage: java -jar SimpleLoadGenerator.jar|com.optit.SimpleLoadGenerator -user [username] -password [password] -host [host] -port [port] -sid [sid] -databaseType [databaseType] -sqlfile [sqlfile] -help|-h|--help|-?");
+		Logger.log("Usage: java -jar SimpleLoadGenerator.jar|com.optit.SimpleLoadGenerator -user [username] -password [password] -host [host] -port [port] -sid [sid] -databaseType [databaseType] -sessions [Amount of sessions] -sqlfile [sqlfile] -ignoreErrors -debug -help|-h|--help|-?");
         Logger.log("");
         Logger.log("[-user]			The database username");
         Logger.log("[-password]		The password of the database user");
@@ -28,7 +28,7 @@ public class SimpleLoadGenerator
         Logger.log("[-port]			Listener port of the database listener");
         Logger.log("[-sid]			Database SID/name");
         Logger.log("[-databaseType]		Database type: oracle|mysql");
-        Logger.log("[-sesssions]		Amount of sessions that should execute the queries");
+        Logger.log("[-sessions]		Amount of sessions that should execute the queries");
         Logger.log("[-sqlfile]		Path to file containing the SQL statements to execute");
         Logger.log("[-ignoreErrors]		Ignore errors caused by SQL statements and carry on executing");
         Logger.log("[-debug]		Enables debug output");
