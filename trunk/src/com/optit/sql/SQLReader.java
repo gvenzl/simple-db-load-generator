@@ -34,6 +34,7 @@ public class SQLReader
 										"PREPARE", "DEALLOCATE PREPARE", "DROP PREPARE", "EXECUTE"
 									};
 	boolean bMySqlFile = false;
+	boolean bMySqlSupportedCommand = false;
 
 	/**************************** ORACLE specific variables *************************/
 	//TODO: Oracle trace file parsing
@@ -123,7 +124,18 @@ public class SQLReader
 				if (mySqlMatcher.matches())
 				{
 					bMySqlFile = true;
-					addMySqlCommand(mySqlMatcher.replaceAll("$4"), mySqlMatcher.replaceAll("$5"));
+					String commandType = mySqlMatcher.replaceAll("$4");
+					String command = mySqlMatcher.replaceAll("$5");
+					if (isSupportedMySqlCommand(commandType, command))
+					{
+						bMySqlSupportedCommand = true;
+						sqlList.add(command.replaceAll("`", ""));
+					}
+					else
+					{
+						bMySqlSupportedCommand = false;
+					}
+
 				}
 				//TODO: Oracle trace file parsing
 				// Oracle trace file line matches
@@ -143,7 +155,7 @@ public class SQLReader
 				else
 				{
 					// Ticket 7: Multi-Line support
-					if (bMySqlFile)
+					if (bMySqlFile && bMySqlSupportedCommand)
 					{
 						// Get index of latest added command
 						int index = (sqlList.size()-1);
@@ -203,13 +215,5 @@ public class SQLReader
 		}
 		
 		return false;
-	}
-	
-	private void addMySqlCommand(String commandType, String command)
-	{
-		if (isSupportedMySqlCommand(commandType, command))
-		{
-			sqlList.add(command.replaceAll("`", ""));
-		}
 	}
 }
