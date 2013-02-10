@@ -54,9 +54,9 @@ The format looks like this ([\t] representing a tabulator character):
 [Date][Space][Time][\t][ThreadId][Space][CommandType][\t][Sql Text][\n]
 [\t][\t][ThreadId][Space][CommandType][\t][Sql Text][\n]
 
-Regular expressions are used to parse those two lines accordingly. The used expressions are:
-"\\d{6} \\d{2}:\\d{2}:\\d{2}\\t\\s?\\d{1,5} (\\w+)\\t?(.+$)"
-"\\t{2}\\s?\\d{1,5} (\\w+)\\t?(.+$)"
+A regular expression is used to parse those two lines accordingly.
+The used expression is:
+((\d{6} \d{2}:\d{2}:\d{2}\t)|(\t{2}))\s*\d* (\w+)\t?(.+$)"
 
 MySQL lists following command types:
   "Sleep"
