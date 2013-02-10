@@ -44,13 +44,13 @@ public class LoggerTest extends TestCase
 	@Test
 	public void test_setDebug() throws Exception
 	{
-		Logger.setDebug(true);
+		Logger.setVerbose(true);
 	}
 	
 	@Test
 	public void test_logDebug() throws Exception
 	{
-		Logger.setDebug(true);
-		Logger.logDebug("This is a DEBUG OUTPUT!");
+		Logger.setVerbose(true);
+		Logger.logVerbose("This is a DEBUG OUTPUT!");
 	}
 }

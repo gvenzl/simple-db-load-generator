@@ -92,7 +92,7 @@ public class Executor
 			{
 				ds = new OracleDataSource();
 				url = "jdbc:oracle:thin:" + parameters.getProperty(Parameters.user) + "/" + parameters.getProperty(Parameters.password) + "@//" +
-						parameters.getProperty(Parameters.host) + ":" + parameters.getProperty(Parameters.port) + "/" + parameters.getProperty(Parameters.sid);
+						parameters.getProperty(Parameters.host) + ":" + parameters.getProperty(Parameters.port) + "/" + parameters.getProperty(Parameters.dbName);
 				((OracleDataSource) ds).setURL(url);
 				((OracleDataSource) ds).setImplicitCachingEnabled(true);
 				break;
@@ -100,7 +100,7 @@ public class Executor
 			case "mysql":
 			{
 				ds = new MysqlDataSource();
-				url = "jdbc:mysql://" + parameters.getProperty(Parameters.host) + ":" + parameters.getProperty(Parameters.port) + "/" + parameters.getProperty(Parameters.sid) +
+				url = "jdbc:mysql://" + parameters.getProperty(Parameters.host) + ":" + parameters.getProperty(Parameters.port) + "/" + parameters.getProperty(Parameters.dbName) +
 							"?user=" + parameters.getProperty(Parameters.user) + "&password=" + parameters.getProperty(Parameters.password);
 				((MysqlDataSource) ds).setURL(url);
 				break;
@@ -110,7 +110,7 @@ public class Executor
 				Logger.log("Wrong database type specified! Cannot establish database connection!");
 			}
 		}
-		Logger.logDebug("URL used to connect: " + url);
+		Logger.logVerbose("URL used to connect: " + url);
 		
 		return ds; 
 	}

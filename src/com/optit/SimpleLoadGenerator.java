@@ -20,24 +20,23 @@ public class SimpleLoadGenerator
 	 */
 	public static void printHelp()
 	{
-		Logger.log("Usage: java -jar SimpleLoadGenerator.jar|com.optit.SimpleLoadGenerator -user [username] -password [password] -host [host] -port [port] -sid [sid] -databaseType [databaseType] -sessions [Amount of sessions] -sqlfile [sqlfile] -ignoreErrors -debug -help|-h|--help|-?");
+		Logger.log("Usage: java -jar SimpleLoadGenerator.jar|com.optit.SimpleLoadGenerator -user [username] -password [password] -host [host] -port [port] -dbName [dbName] -databaseType [databaseType] -sessions [Amount of sessions] -sqlfile [sqlfile] -ignoreErrors -verbose -help|-h|--help|-?");
         Logger.log("");
         Logger.log("[-user]			The database username");
-        Logger.log("[-password]		The password of the database user");
+        Logger.log("[-password]			The password of the database user");
         Logger.log("[-host]			Database machine host name");
         Logger.log("[-port]			Listener port of the database listener");
-        Logger.log("[-sid]			Database SID/name");
+        Logger.log("[-dbName]			Database name/service name");
         Logger.log("[-databaseType]		Database type: oracle|mysql");
-        Logger.log("[-sessions]		Amount of sessions that should execute the queries");
-        Logger.log("[-sqlfile]		Path to file containing the SQL statements to execute");
+        Logger.log("[-sessions]			Amount of sessions that should execute the queries");
+        Logger.log("[-sqlfile]			Path to file containing the SQL statements to execute");
         Logger.log("[-ignoreErrors]		Ignore errors caused by SQL statements and carry on executing");
-        Logger.log("[-debug]		Enables debug output");
+        Logger.log("[-verbose]			Enables verbose output");
         Logger.log("[-help|--help|-h|-?]	Display this help");
         Logger.log();
         Logger.log("If a properties file (SimpleLoadGenerator.properties) exists, the system will load the parameters from there!");
         Logger.log("You will not need to specify any additional parameter. However, the properties file will only be read when you do not pass any parameters on!");
-        Logger.log("Each SQL statement in the sql file has to be delimited by \";\".");
-        Logger.log("The application does not handle escaped \";\" and will treat them as delimiter!");
+        Logger.log("Each SQL statement in the plain text sql file has to be delimited by \";\\n\".");
         Logger.log("The application does not do a implicit commit! If you want to execute DML statements you will have to include a COMMIT statement!");
 	}
 
@@ -52,7 +51,7 @@ public class SimpleLoadGenerator
 
 		// Set default parameters
 		parameters.setProperty(Parameters.sessions, "1");
-		parameters.setProperty(Parameters.debug, "false");
+		parameters.setProperty(Parameters.verbose, "false");
 		parameters.setProperty(Parameters.ignoreErrors, "false");
 		
 		// No parameters passed, read parameters from properties file
@@ -112,9 +111,9 @@ public class SimpleLoadGenerator
 			{
 				parameters.setProperty(Parameters.port, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.sid))
+			else if (args[i].equals("-" + Parameters.dbName))
 			{
-				parameters.setProperty(Parameters.sid, args[++i]);
+				parameters.setProperty(Parameters.dbName, args[++i]);
 			}
 			else if (args[i].equals("-" + Parameters.databaseType))
 			{
@@ -128,9 +127,9 @@ public class SimpleLoadGenerator
 			{
 				parameters.setProperty(Parameters.sqlfile, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.debug))
+			else if (args[i].equals("-" + Parameters.verbose))
 			{
-				parameters.setProperty(Parameters.debug, "true");
+				parameters.setProperty(Parameters.verbose, "true");
 			}
 			else if (args[i].equals("-" + Parameters.ignoreErrors))
 			{
@@ -151,7 +150,7 @@ public class SimpleLoadGenerator
 		}
 		
 		// Set debug flag based on parameter
-		Logger.setDebug(parameters.getProperty(Parameters.debug).equalsIgnoreCase("true"));
+		Logger.setVerbose(parameters.getProperty(Parameters.verbose).equalsIgnoreCase("true"));
 		
 		// main try/catch block to avoid exception being thrown out not handled
 		try

@@ -28,12 +28,12 @@ public class ParameterTest extends TestCase
 	public void test_values()
 	{
 		assertEquals("databaseType", MyParams.databaseType);
-		assertEquals("debug", Parameters.debug);
+		assertEquals("verbose", Parameters.verbose);
 		assertEquals("host", Parameters.host);
 		assertEquals("password", Parameters.password);
 		assertEquals("port", Parameters.port);
 		assertEquals("sessions", Parameters.sessions);
-		assertEquals("sid", Parameters.sid);
+		assertEquals("dbName", Parameters.dbName);
 		assertEquals("sqlfile", Parameters.sqlfile);
 		assertEquals("user", Parameters.user);
 	}
