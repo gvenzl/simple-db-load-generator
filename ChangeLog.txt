@@ -1,0 +1,13 @@
+SimpleLoadGenerator - Change Log - (c) Gerald Venzl
+
+v1.1.0
+
+Changes:
+
+* Include ChangeLog
+* Capability of parsing MqSyl general log files
+
+Bugfixes:
+
+* MySql general log file: Replace "`" character in SQL strings - MySql masks all columns with "`" in the output file but those don't parse as prepared statements and have to be trimmed. 
+* Corrected online help; session parameter was missing
