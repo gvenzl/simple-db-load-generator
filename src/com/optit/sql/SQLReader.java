@@ -25,8 +25,7 @@ public class SQLReader
 	private ArrayList<String> sqlList;
 	
 	/***************************** MYSQL specific variables *************************/
-	private static final String MYSQLDATETIMEPATTERN = "\\d{6} \\d{2}:\\d{2}:\\d{2}\\t\\s*\\d* (\\w+)\\t?(.+$)";
-	private static final String MYSQLSAMETIMEPATTERN = "\\t{2}\\s*\\d* (\\w+)\\t?(.+$)";
+	private static final String MYSQLPATTERN = "((\\d{6} \\d{2}:\\d{2}:\\d{2}\\t)|(\\t{2}))\\s*\\d* (\\w+)\\t?(.+$)";
 	private static final String MYSQLSQLCOMMENTPATTERN = "(/\\* .* \\*/)(.*)";
 	public static final String[] MYSQLSUPPORTEDCOMMANDTYPES = { "QUERY", "DELAYED INSERT", "PREPARE", "EXECUTE", "CLOSE STMT", "RESET STMT", "FETCH" };
 	public static final String[] MYSQLSUPPORTEDCOMMANDS =
@@ -95,8 +94,7 @@ public class SQLReader
 			// Create RegEx pattern
 			
 			// MySql RegEx pattern
-			Pattern mySqlDateTimePattern = Pattern.compile(MYSQLDATETIMEPATTERN);
-			Pattern mySqlSameTimePattern = Pattern.compile(MYSQLSAMETIMEPATTERN);
+			Pattern mySqlPattern = Pattern.compile(MYSQLPATTERN);
 			
 			// Oracle RegEx pattern
 			//TODO: Oracle trace file parsing
@@ -112,23 +110,17 @@ public class SQLReader
 			{
 				
 				// Create matchers for both MySql RegEx patterns for current line
-				Matcher mySqlDateMatcher = mySqlDateTimePattern.matcher(lines[iLineNumber]);
-				Matcher mySqlSameMatcher = mySqlSameTimePattern.matcher(lines[iLineNumber]);
+				Matcher mySqlMatcher = mySqlPattern.matcher(lines[iLineNumber]);
 				
 				//TODO: Oracle Trace file parsing
 				// Matcher oracleMatcher = oraclePattern.matcher(lines[iLineNumber]);
 				
 				Matcher textFileMatcher = textFilePattern.matcher(lines[iLineNumber]);
 			
-				// MySql Date line matches
-				if (mySqlDateMatcher.matches())
+				// MySqlline matches
+				if (mySqlMatcher.matches())
 				{
-					addMySqlCommand(mySqlDateMatcher.replaceAll("$1"), mySqlDateMatcher.replaceAll("$2"));
-				}
-				// MySql Non-date line matches
-				else if(mySqlSameMatcher.matches())
-				{
-					addMySqlCommand(mySqlSameMatcher.replaceAll("$1"), mySqlSameMatcher.replaceAll("$2"));
+					addMySqlCommand(mySqlMatcher.replaceAll("$4"), mySqlMatcher.replaceAll("$5"));
 				}
 				//TODO: Oracle trace file parsing
 				// Oracle trace file line matches
