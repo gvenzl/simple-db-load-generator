@@ -33,10 +33,12 @@ public class SQLReader
 										"REPLACE ", "CALL", "SAVEPOINT", "ROLLBACK WORK TO", "ROLLBACK TO", "RELEASE SAVEPOINT", "LOCK TABLES", "UNLOCK TABLES",
 										"PREPARE", "DEALLOCATE PREPARE", "DROP PREPARE", "EXECUTE"
 									};
+	boolean bMySqlFile = false;
 
 	/**************************** ORACLE specific variables *************************/
 	//TODO: Oracle trace file parsing
 	//private static final String ORACLEPATTERN = "";
+	boolean bOracleFile = false;
 
 	/**************************** TextFile specific variables *************************/
 	private static String TEXTFILEPATTERN= "(.+)(;$)";
@@ -104,7 +106,7 @@ public class SQLReader
 			Pattern textFilePattern = Pattern.compile(TEXTFILEPATTERN);
 			
 			// Loop over array - use for loop rather than for-each for error line tracking!
-			int iErrorCount = 0;
+			String multiLineTextFileCommand = "";
 			String[] lines = fileContent.trim().split(separator);
 			for (int iLineNumber=0; iLineNumber<lines.length; iLineNumber++)
 			{
@@ -120,30 +122,42 @@ public class SQLReader
 				// MySqlline matches
 				if (mySqlMatcher.matches())
 				{
+					bMySqlFile = true;
 					addMySqlCommand(mySqlMatcher.replaceAll("$4"), mySqlMatcher.replaceAll("$5"));
 				}
 				//TODO: Oracle trace file parsing
 				// Oracle trace file line matches
 				/*else if (oracleMatcher.matches())
 				{
-				
+					bOracleFile = true;
 				}*/
 				else if (textFileMatcher.matches())
 				{
-					sqlList.add(textFileMatcher.replaceAll("$1"));
+					// Add potential multi lines to SQL command (default empty string)
+					multiLineTextFileCommand = multiLineTextFileCommand + textFileMatcher.replaceAll("$1");
+					// Add complete sql command to list
+					sqlList.add(multiLineTextFileCommand);
+					// Reset multi line variable
+					multiLineTextFileCommand = "";
 				}
 				else
 				{
-					Logger.log("Line " + (iLineNumber-1) + " could not be parsed: " + lines[iLineNumber]);
-					iErrorCount++;
-					
-					// If too many errors, abort!
-					if (iErrorCount > 1000)
+					// Ticket 7: Multi-Line support
+					if (bMySqlFile)
 					{
-						Logger.log("It seems tht the file format of this SQL file is either invalid or currently not supported!\n" +
-								"If you want that file format supported, please open an enhacement request under http://sourceforge.net/projects/simpleloadgener/ or email the project owner!");
-						sqlList.clear();
-						break;
+						// Get index of latest added command
+						int index = (sqlList.size()-1);
+						// Get last SQL command
+						String sql = sqlList.get(index);
+						// Append current line
+						sql = sql + " " + lines[iLineNumber];
+						// Override last added command
+						sqlList.set(index, sql);
+					}
+					// Text file could be Multi-line, save current line until command end
+					else
+					{
+						multiLineTextFileCommand = multiLineTextFileCommand +lines[iLineNumber] + " ";
 					}
 				}
 			}

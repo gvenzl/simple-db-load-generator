@@ -5,7 +5,13 @@ v1.1.0
 Changes:
 
 * Include ChangeLog
-* Capability of parsing MqSyl general log files
+* Capability of parsing MySql general log files
+* Capability of parsing Multi-Line text files
+* Removed parse error count - Previously the program stopped after 1000 parse errors in order to prevent useless parallel invalid SQL execution.
+This changed for TextFile Multi line support where a line in between a SQL command can be anything.
+It is assumed that:
+a) MySql general log format won't change
+b) The user verified the SQLs before he added them into the plain text files!  
 
 Bugfixes:
 
