@@ -97,7 +97,7 @@ public class ExecutorThread extends Thread
 				try (PreparedStatement stmt = conn.prepareStatement(sql))
 				{
 					Logger.log(this.getFullName() + ": Executing SQL...");
-					Logger.logDebug(this.getFullName() + ": SQL text: " + sql);
+					Logger.logVerbose(this.getFullName() + ": SQL text: " + sql);
 					
 					long startTime = 0;
 					int rows=0;
@@ -158,7 +158,7 @@ public class ExecutorThread extends Thread
 		catch (SQLException e)
 		{
 			// Ignore exception while closing, program is about to stop
-			Logger.logDebug(this.getFullName() + ": Error closing Db connection: " + e.getMessage());
+			Logger.logVerbose(this.getFullName() + ": Error closing Db connection: " + e.getMessage());
 		}
 		Logger.log(this.getFullName() + ": Stopping...");
 	}

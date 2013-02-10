@@ -8,15 +8,15 @@ package com.optit.logger;
 public class Logger
 {
 	private static long milliSecs = 0;
-	private static boolean debugFlag = false;
+	private static boolean verboseFlag = false;
 	
 	/**
-	 * En- or disables debugging output
+	 * En- or disables verbose output
 	 * @param debug True=enable debug; False=disable debug
 	 */
-	public static void setDebug(boolean debug)
+	public static void setVerbose(boolean verbose)
 	{
-		debugFlag = debug;
+		verboseFlag = verbose;
 	}
 	
 	/**
@@ -32,23 +32,23 @@ public class Logger
 	}
 	
 	/**
-	 * Logs one line into the standard output only if debug is enabled
+	 * Logs one line into the standard output only if verbose is enabled
 	 * @param line The line to log
 	 */
-	public static void logDebug(String line)
+	public static void logVerbose(String line)
 	{
-		if (debugFlag)
+		if (verboseFlag)
 		{
 			synchronized (System.out)
 			{
-				System.out.println("DEBUG: " + line);
+				System.out.println("VERBOSE: " + line);
 			}
 		}
 	}
 	
 	
 	/**
-	 * Logs a new line into the stanard output
+	 * Logs a new line into the standard output
 	 */
 	public static void log()
 	{
