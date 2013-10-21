@@ -10,11 +10,12 @@ import oracle.jdbc.pool.OracleDataSource;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.optit.Parameters;
+import com.optit.commands.Command;
+import com.optit.commands.CommandsReader;
 import com.optit.logger.Logger;
-import com.optit.sql.SQLReader;
 
 /**
- * The executor class is responsible to establish the data source to the database, run the SQLReader to parse the sql file 
+ * The executor class is responsible to establish the data source to the database, run the CommandsReader to parse the sql file 
  * and start/stop the test execution threads.
  * @author gvenzl
  */
@@ -35,31 +36,23 @@ public class Executor
 		 * Constructs a new ShutDown class
 		 * @param threads Started threads which need to be stopped again
 		 */
-		public ShutDown(ExecutorThread[] threads)
-		{
+		public ShutDown(ExecutorThread[] threads) {
 			this.threadsToStop = threads;
 		}
 		
 		@Override
-		public void run()
-		{
+		public void run() {
 			// Set stop flag for each thread
-			for (int i=0;i<threadsToStop.length;i++)
-			{
+			for (int i=0;i<threadsToStop.length;i++) {
 				threadsToStop[i].stopThread();
 			}
 			
 			// Wait until each thread has finished
-			for (int i=0;i<threadsToStop.length;i++)
-			{
-				try
-				{
+			for (int i=0;i<threadsToStop.length;i++) {
+				try {
 					threadsToStop[i].join();
 				}
-				catch (InterruptedException e)
-				{
-					// Ignore exception
-				}
+				catch (InterruptedException e) { /* Ignore exception */ }
 			}
 		}
 	}
@@ -68,13 +61,12 @@ public class Executor
 	 * This constructor creates a new Executor instance
 	 * @param parameters A instance of the Parameter object that contains the runtime parameters
 	 */
-	public Executor (Properties parameters)
-	{
+	public Executor (Properties parameters)	{
 		this.parameters = parameters;
 	}
 	
 	/**
-	 * This method initialises a new data source to the database
+	 * This method initializes a new data source to the database
 	 * @return A new DataSource instance to the database. NULL if the DataSource couldn't be established.
 	 * @throws SQLException Any SQL/DB exception during database connection establishment
 	 */
@@ -105,6 +97,12 @@ public class Executor
 				((MysqlDataSource) ds).setURL(url);
 				break;
 			}
+			case "kvstore":
+			{
+				//TODO: Implement KVStore Data Source
+				//ds = (DataSource) new KVDataSource(parameters.getProperty(Parameters.dbName), parameters.getProperty(Parameters.host) + ":" + parameters.getProperty(Parameters.port));
+				break;
+			}
 			default:
 			{
 				Logger.log("Wrong database type specified! Cannot establish database connection!");
@@ -122,18 +120,15 @@ public class Executor
 	{
 		try
 		{
-			// Initialise the Data Source
+			// Initialize the Data Source
 			DataSource dbDataSource = initializeDataSource();
-			if (dbDataSource != null)
-			{
-	
+			if (dbDataSource != null) {
 				// Parse all SQLs into a ArrayList 
-				try
-				{
-					ArrayList<String> sqls = new SQLReader(parameters.getProperty(Parameters.sqlfile)).parseSqlFile();
+				try	{
+					ArrayList<Command> commands = new CommandsReader(parameters.getProperty(Parameters.inputFile)).parseCommandsFile();
 					
 					// Only execute tests if LinkedList is filled (not filled if parse error occurred)
-					if (!sqls.isEmpty())
+					if (!commands.isEmpty())
 					{
 						// Start and execute load threads
 						int sessions = Integer.valueOf(parameters.getProperty(Parameters.sessions)).intValue();
@@ -142,8 +137,8 @@ public class Executor
 						ExecutorThread[] threads = new ExecutorThread[sessions];
 						for (int iSession=0;iSession<sessions;iSession++)
 						{
-							threads[iSession] = new ExecutorThread(dbDataSource.getConnection(), sqls, Boolean.valueOf(parameters.getProperty(Parameters.ignoreErrors)).booleanValue());
-							threads[iSession].setName("SQL-Loader");
+							threads[iSession] = new ExecutorThread(dbDataSource.getConnection(), commands, Boolean.valueOf(parameters.getProperty(Parameters.ignoreErrors)).booleanValue());
+							threads[iSession].setName("Loader");
 							threads[iSession].start();
 						}
 						
@@ -166,7 +161,7 @@ public class Executor
 				}
 				catch (Exception e)
 				{
-					Logger.log("Error during SQL file parsing: " + e.getMessage());
+					Logger.log("Error during input file parsing: " + e.getMessage());
 					e.printStackTrace(System.err);
 				}
 			}

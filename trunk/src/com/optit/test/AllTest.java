@@ -16,8 +16,9 @@ public class AllTest extends TestSuite
 		suite.addTestSuite(SimpleLoadGeneratorTest.class);
 		suite.addTestSuite(LoggerTest.class);
 		suite.addTestSuite(ParameterTest.class);
-		suite.addTestSuite(SQLReaderTest.class);
+		suite.addTestSuite(CommandsReaderTest.class);
 		suite.addTestSuite(RandomIteratorTest.class);
+		suite.addTestSuite(CommandTest.class);
 		return suite;
 	}
 }

@@ -20,18 +20,18 @@ public class SimpleLoadGenerator
 	 */
 	public static void printHelp()
 	{
-		Logger.log("Usage: java -jar SimpleLoadGenerator.jar|com.optit.SimpleLoadGenerator -user [username] -password [password] -host [host] -port [port] -dbName [dbName] -databaseType [databaseType] -sessions [Amount of sessions] -sqlfile [sqlfile] -ignoreErrors -verbose -help|-h|--help|-?");
+		Logger.log("Usage: java -jar SimpleLoadGenerator.jar|com.optit.SimpleLoadGenerator -user [username] -password [password] -host [host] -port [port] -dbName [dbName] -databaseType [databaseType] -sessions [Amount of sessions] -inputFile [inputFile] -ignoreErrors -verbose -help|-h|--help|-?");
         Logger.log("");
         Logger.log("[-user]			The database username");
-        Logger.log("[-password]			The password of the database user");
+        Logger.log("[-password]		The password of the database user");
         Logger.log("[-host]			Database machine host name");
         Logger.log("[-port]			Listener port of the database listener");
-        Logger.log("[-dbName]			Database name/service name");
+        Logger.log("[-dbName]		Database name/service name");
         Logger.log("[-databaseType]		Database type: oracle|mysql");
-        Logger.log("[-sessions]			Amount of sessions that should execute the queries");
-        Logger.log("[-sqlfile]			Path to file containing the SQL statements to execute");
+        Logger.log("[-sessions]		Amount of sessions that should execute the queries");
+        Logger.log("[-inputFile]		Path to file containing the commands (e.g. SQL statements or Key Values) to execute");
         Logger.log("[-ignoreErrors]		Ignore errors caused by SQL statements and carry on executing");
-        Logger.log("[-verbose]			Enables verbose output");
+        Logger.log("[-verbose]		Enables verbose output");
         Logger.log("[-help|--help|-h|-?]	Display this help");
         Logger.log();
         Logger.log("If a properties file (SimpleLoadGenerator.properties) exists, the system will load the parameters from there!");
@@ -46,7 +46,7 @@ public class SimpleLoadGenerator
 	 */
 	public static void main(String[] args)
 	{
-		// Initialise application parameter properties
+		// Initialize application parameter properties
 		Properties parameters = new Properties();
 
 		// Set default parameters
@@ -123,9 +123,9 @@ public class SimpleLoadGenerator
 			{
 				parameters.setProperty(Parameters.sessions, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.sqlfile))
+			else if (args[i].equals("-" + Parameters.inputFile))
 			{
-				parameters.setProperty(Parameters.sqlfile, args[++i]);
+				parameters.setProperty(Parameters.inputFile, args[++i]);
 			}
 			else if (args[i].equals("-" + Parameters.verbose))
 			{

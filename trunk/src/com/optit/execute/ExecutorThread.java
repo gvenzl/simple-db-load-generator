@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
+import com.optit.commands.Command;
 import com.optit.logger.Logger;
 import com.optit.util.RandomIterator;
 
@@ -21,7 +22,7 @@ public class ExecutorThread extends Thread
 {
 	private static boolean ignoreErrors = false;
 	private Connection conn;
-	private List<String> sqls;
+	private List<Command> commands;
 	
 	private boolean stop = false;
 	
@@ -31,20 +32,21 @@ public class ExecutorThread extends Thread
 	 * @param sqls A List of all sqls that should be executed
 	 * @param ignoreErrs Flag that defines if errors caused by SQLs should force the thread to stop or not
 	 */
-	public ExecutorThread(Connection conn, List<String> sqls, boolean ignoreErrs)
+	public ExecutorThread(Connection conn, List<Command> commands, boolean ignoreErrs)
 	{
-		this.sqls = sqls;
 		this.conn = conn;
+		this.commands = commands;
 		ignoreErrors = ignoreErrs;
 		
-		try
-		{
-			this.conn.setAutoCommit(false);
-		}
-		catch (SQLException e)
-		{
-			Logger.log("Could not set AutoCommit to false: " + e.getMessage());
-			Logger.log("Test will continue with default AutoCommit value!");
+		// Only if connection is a SQL connection set AutoCommit to false
+		if (conn instanceof java.sql.Connection) {
+			try	{
+				this.conn.setAutoCommit(false);
+			}
+			catch (SQLException e) {
+				Logger.log("Could not set AutoCommit to false: " + e.getMessage());
+				Logger.log("Test will continue with default AutoCommit value!");
+			}
 		}
 	}
 	
@@ -75,79 +77,84 @@ public class ExecutorThread extends Thread
 		while (!stop)
 		{
 			// Iterate over all SQLs
-			RandomIterator<String> iterator = new RandomIterator<String>(sqls);
+			RandomIterator<Command> iterator = new RandomIterator<Command>(commands);
 			
-			// Endless loop for SQLs until thread has to stop - loop will be broken by NoSuchElementException of the iterator
+			// Endless loop for commands until thread has to stop - loop will be broken by NoSuchElementException of the iterator
 			while (!stop)
 			{
-				String sql;
+				Command cmd;
 
-				try
-				{
-					sql = iterator.next().trim();
-				}
-				catch (NoSuchElementException e)
-				{
+				try	{ cmd = iterator.next(); }
+				catch (NoSuchElementException e) {
 					// No more elements in the list - break inner loop
-					Logger.log(this.getFullName() + ": All SQLs executed, re-executing...");
+					Logger.log(this.getFullName() + ": All commands executed, re-executing...");
+					// Break loop
 					break;
 				}
-
-				// Run next statement
-				try (PreparedStatement stmt = conn.prepareStatement(sql))
+				
+				long startTime = 0;
+				
+				switch (cmd.getType())
 				{
-					Logger.log(this.getFullName() + ": Executing SQL...");
-					Logger.logVerbose(this.getFullName() + ": SQL text: " + sql);
-					
-					long startTime = 0;
-					int rows=0;
-					// executeQuery for selects
-					if (sql.toLowerCase().startsWith("select"))
+					case SQL:
 					{
-						startTime = System.currentTimeMillis();
-						ResultSet rslt = stmt.executeQuery();
-					
-						// Fetching all results - in order to produce I/O
-						while (rslt.next())
+						String sqlCommand = cmd.getCommand().trim();
+						try (PreparedStatement stmt = conn.prepareStatement(sqlCommand))
 						{
-							rows++;
+							Logger.log(this.getFullName() + ": Executing SQL...");
+							Logger.logVerbose(this.getFullName() + ": SQL text: " + sqlCommand);
+							
+							int rows=0;
+							// executeQuery for selects
+							if (sqlCommand.toLowerCase().startsWith("select")) 
+							{
+								startTime = System.currentTimeMillis();
+								ResultSet rslt = stmt.executeQuery();
+							
+								// Fetching all results - in order to produce I/O
+								while (rslt.next())	{
+									rows++;
+								}
+							}
+							else {
+								startTime = System.currentTimeMillis();
+								stmt.execute();
+							}
+							Logger.log(this.getFullName() + ": " + rows + " rows in set - (" + (System.currentTimeMillis()-startTime) + "ms)");					
+						}
+						catch (SQLException e)
+						{
+							Logger.log(this.getFullName() + ": SQL error detected!");
+							Logger.log(this.getFullName() + ": " + e.getMessage());
+								
+							// Only if errors should not be ignored stop thread
+							if (!ignoreErrors)
+							{
+								Logger.log(this.getFullName() + ": Stopping thread due to SQL error!");
+								stop = true;
+							}
 						}
 					}
-					else
+					case KV:
 					{
-						startTime = System.currentTimeMillis();
-						stmt.execute();
+						//TODO: IMplement KV GET operation
+						//TODO: Implement KV PUT operations
+						break;
 					}
-					Logger.log(this.getFullName() + ": " + rows + " rows in set - (" + (System.currentTimeMillis()-startTime) + "ms)");					
-
+				}
+				
+				try {
 					// Wait random amount of milliseconds between 0 and 1000 (1 second max) before executing next SQL
 					int sleep = random.nextInt(1000);
 					Logger.log(this.getFullName() + ": Sleeping for " + sleep + "ms");
 					Thread.sleep(sleep);
 				}
-				catch (InterruptedException | SQLException e)
-				{
-					if (e instanceof SQLException)
-					{
-						Logger.log(this.getFullName() + ": SQL error detected!");
-						Logger.log(this.getFullName() + ": " + e.getMessage());
-						
-						// Only if errors should not be ignored stop thread
-						if (!ignoreErrors)
-						{
-							Logger.log(this.getFullName() + ": Stopping thread due to SQL error!");
-							stop = true;
-						}
-					}
-					else
-					{
-						Logger.log(this.getFullName() + ": Interrupt (Ctrl+C) detected, stopping thread!");
-						stop = true;
-					}
+				catch (InterruptedException ie) {
+					Logger.log(this.getFullName() + ": Interrupt (Ctrl+C) detected, stopping thread!");
+					stop = true;
 				}
 			}
 		}
-		
 		try
 		{
 			// Close database connection

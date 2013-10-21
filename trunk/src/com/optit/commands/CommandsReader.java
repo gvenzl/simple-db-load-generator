@@ -1,4 +1,4 @@
-package com.optit.sql;
+package com.optit.commands;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -12,17 +12,20 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import oracle.kv.Key;
+import oracle.kv.Value;
+
 import com.optit.logger.Logger;
 
 /**
- * The SQLReader class parses a file for SQL statements
+ * The CommandsReader class parses a file for commands like SQL statements or Key and Values
  * @author gvenzl
  *
  */
-public class SQLReader
+public class CommandsReader
 {
-	private final Path sqlFilePath;
-	private ArrayList<String> sqlList;
+	private final Path commandsFilePath;
+	private ArrayList<Command> commandsList;
 	
 	/***************************** MYSQL specific variables *************************/
 	private static final String MYSQLPATTERN = "((\\d{6} \\d{2}:\\d{2}:\\d{2}\\t)|(\\t{2}))\\s*\\d* (\\w+)\\t?(.+$)";
@@ -36,35 +39,38 @@ public class SQLReader
 	boolean bMySqlFile = false;
 	boolean bMySqlSupportedCommand = false;
 
-	/**************************** ORACLE specific variables *************************/
+	/**************************** ORACLE specific variables *******************************/
 	//TODO: Oracle trace file parsing
 	//private static final String ORACLEPATTERN = "";
 	boolean bOracleFile = false;
 
-	/**************************** TextFile specific variables *************************/
+	/**************************** KV store specific variables *****************************/
+	private static final String KVPATTERN = "((/\\w+)*(/-)(/\\w+)*)\\|\\|(.+$)";
+	
+	/**************************** TextFile specific variables *****************************/
 	private static String TEXTFILEPATTERN= "(.+)(;$)";
 	
 	/**
-	 * Creates a new SQLReader instance
+	 * Creates a new CommandsReader instance
 	 * @param filePath Path to the file that should be parsed
 	 */
-	public SQLReader (String filePath)
+	public CommandsReader (String filePath)
 		throws Exception
 	{
-		this.sqlFilePath = FileSystems.getDefault().getPath(filePath);
+		this.commandsFilePath = FileSystems.getDefault().getPath(filePath);
 		
 		// Multiple files are not supported yet, therefore no directory can be specified!
-		if (Files.isDirectory(sqlFilePath, new LinkOption[] {}))
+		if (Files.isDirectory(commandsFilePath, new LinkOption[] {}))
 		{
-			throw new Exception("The passed file " + sqlFilePath.toAbsolutePath().toString() + " is a directory!" +
+			throw new Exception("The passed file " + commandsFilePath.toAbsolutePath().toString() + " is a directory!" +
 									"Executing multiple files is not supported yet but planned for the future!");
 		}
 		// File not readable
-		else if (!Files.isReadable(sqlFilePath))
+		else if (!Files.isReadable(commandsFilePath))
 		{
-			throw new Exception("File " + sqlFilePath.toAbsolutePath().toString() + " is not readable!");
+			throw new Exception("File " + commandsFilePath.toAbsolutePath().toString() + " is not readable!");
 		}
-		this.sqlList = new ArrayList<String>();
+		this.commandsList = new ArrayList<Command>();
 	}
 	
 	/**
@@ -72,14 +78,14 @@ public class SQLReader
 	 * It distinguishes between plain text SQLs, MySql General Log and Oracle trace files via RegEx patterns
 	 * @return a ArrayList containing all SQls of the file
 	 */
-	public ArrayList<String> parseSqlFile ()
+	public ArrayList<Command> parseCommandsFile ()
 	{
-		Logger.log("Parsing sql file");
+		Logger.log("Parsing commands file");
 
 		try
 		{
 			// Read file (using new Java 7 NIO)
-			String fileContent = new String(Files.readAllBytes(sqlFilePath));
+			String fileContent = new String(Files.readAllBytes(commandsFilePath));
 						
 			// Default: Unix line feed
 			String separator = "\n";
@@ -99,9 +105,13 @@ public class SQLReader
 			// MySql RegEx pattern
 			Pattern mySqlPattern = Pattern.compile(MYSQLPATTERN);
 			
-			// Oracle RegEx pattern
+			// Oracle RDBMS RegEx pattern
 			//TODO: Oracle trace file parsing
 			// Pattern oraclePattern = Pattern.compile(ORACLEPATTERN);
+			
+			// Oracle NosQL DB RegEx pattern
+			
+			Pattern kVPattern = Pattern.compile(KVPATTERN);
 			
 			// Text file pattern
 			Pattern textFilePattern = Pattern.compile(TEXTFILEPATTERN);
@@ -112,13 +122,15 @@ public class SQLReader
 			for (int iLineNumber=0; iLineNumber<lines.length; iLineNumber++)
 			{
 				
-				// Create matchers for both MySql RegEx patterns for current line
+				// Create matchers for all input RegEx for current line
 				Matcher mySqlMatcher = mySqlPattern.matcher(lines[iLineNumber]);
 				
 				//TODO: Oracle Trace file parsing
 				// Matcher oracleMatcher = oraclePattern.matcher(lines[iLineNumber]);
 				
 				Matcher textFileMatcher = textFilePattern.matcher(lines[iLineNumber]);
+				
+				Matcher kVFileMatcher = kVPattern.matcher(lines[iLineNumber]);
 			
 				// MySqlline matches
 				if (mySqlMatcher.matches())
@@ -129,7 +141,7 @@ public class SQLReader
 					if (isSupportedMySqlCommand(commandType, command))
 					{
 						bMySqlSupportedCommand = true;
-						sqlList.add(command.replaceAll("`", ""));
+						commandsList.add(new Command(command.replaceAll("`", "")));
 					}
 					else
 					{
@@ -143,12 +155,22 @@ public class SQLReader
 				{
 					bOracleFile = true;
 				}*/
+				else if (kVFileMatcher.matches())
+				{
+					// Extract key
+					Key key = Key.fromString(kVFileMatcher.replaceAll("$1"));
+
+					// Extract value
+					Value value = Value.createValue(kVFileMatcher.replaceAll("$5").getBytes());
+					
+					commandsList.add(new Command(key, value));
+				}
 				else if (textFileMatcher.matches())
 				{
 					// Add potential multi lines to SQL command (default empty string)
 					multiLineTextFileCommand = multiLineTextFileCommand + textFileMatcher.replaceAll("$1");
 					// Add complete sql command to list
-					sqlList.add(multiLineTextFileCommand);
+					commandsList.add(new Command(multiLineTextFileCommand));
 					// Reset multi line variable
 					multiLineTextFileCommand = "";
 				}
@@ -158,13 +180,13 @@ public class SQLReader
 					if (bMySqlFile && bMySqlSupportedCommand)
 					{
 						// Get index of latest added command
-						int index = (sqlList.size()-1);
+						int index = (commandsList.size()-1);
 						// Get last SQL command
-						String sql = sqlList.get(index);
+						String sql = commandsList.get(index).getCommand();
 						// Append current line
 						sql = sql + " " + lines[iLineNumber];
 						// Override last added command
-						sqlList.set(index, sql);
+						commandsList.set(index, new Command(sql));
 					}
 					// Text file could be Multi-line, save current line until command end
 					else
@@ -175,15 +197,15 @@ public class SQLReader
 			}
 
 			Logger.log("Lines parsed: " + lines.length);
-			Logger.log("Amount of valid SQLs parsed: " + sqlList.size());
+			Logger.log("Amount of valid commands parsed: " + commandsList.size());
 		}
 		catch (IOException e)
 		{
-			Logger.log("Error while reading from SQL file: " + sqlFilePath);
+			Logger.log("Error while reading from commands file: " + commandsFilePath);
 			Logger.log(e.getMessage());
 		}
 		
-		return sqlList;
+		return commandsList;
 	}
 	
 	/**

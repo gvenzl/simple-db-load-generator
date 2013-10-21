@@ -15,7 +15,7 @@ public abstract class Parameters
 	public static final String dbName = "dbName";
 	public static final String databaseType = "databaseType";
 	public static final String sessions = "sessions";
-	public static final String sqlfile = "sqlfile";
+	public static final String inputFile = "inputFile";
 	public static final String verbose = "verbose";
 	public static final String ignoreErrors = "ignoreErrors";
 }
