@@ -11,9 +11,10 @@
 	<property name="dir.doc" location="doc"/>
 	<property name="dir.javadoc" location="${dir.doc}/javadoc"/>
 	<!-- Class paths -->
-	<property name="JUnitLib" value="C:/Program Files/eclipse juno/plugins/org.junit_4.10.0.v4_10_0_v20120426-0900/junit.jar"/>
+	<property name="JUnitLib" value="C:/Program Files/Eclipse Kepler/plugins/org.junit_4.11.0.v201303080030/junit.jar"/>
 	<property name="OracleJDBCLib" value="D:/Muell/ojdbc6.jar"/>
 	<property name="MySqlJDBCLib" value="D:/Muell/mysql-connector-java-5.1.21-bin.jar"/>
+	<property name="KVStoreLib" value="D:/Muell/kvclient.jar"/>
 	<property name="test.class.name" value="com.optit.test.AllTest"/>
 
 	<target name="init">
@@ -36,6 +37,7 @@
 				<pathelement location="${JUnitLib}"/>
 				<pathelement location="${OracleJDBCLib}"/>
 				<pathelement location="${MySqlJDBCLib}"/>
+				<pathelement location="${KVStoreLib}"/>
 			</classpath>
 		</javac>
 	</target>
@@ -51,6 +53,7 @@
 				<pathelement location="${JUnitLib}"/>
 				<pathelement location="${OracleJDBCLib}"/>
 				<pathelement location="${MySqlJDBCLib}"/>
+				<pathelement location="${KVStoreLib}"/>
 			</classpath>
 			<formatter type="plain" usefile="false" />
 		</junit>

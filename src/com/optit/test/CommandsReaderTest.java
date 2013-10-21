@@ -6,18 +6,19 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import com.optit.sql.SQLReader;
+import com.optit.commands.Command;
+import com.optit.commands.CommandsReader;
 
 /**
  * @author gvenzl
  *
  */
-public class SQLReaderTest extends TestCase
+public class CommandsReaderTest extends TestCase
 {
 	@Test
 	public void test_SqlReader() throws Exception
 	{
-		new SQLReader("allSqls.sql");
+		new CommandsReader("allSqls.sql");
 	}
 	
 	@Test
@@ -26,7 +27,7 @@ public class SQLReaderTest extends TestCase
 	{
 		// Amount of SQLs in test file
 		final int expectedParsedSQLs = 50;
-		ArrayList<String> sqls =new SQLReader("allSqls.sql").parseSqlFile();
+		ArrayList<Command> sqls = new CommandsReader("allSqls.sql").parseCommandsFile();
 		
 		assertEquals(expectedParsedSQLs, sqls.size());
 	}
@@ -37,13 +38,13 @@ public class SQLReaderTest extends TestCase
 	{
 		// Amount of valid/supported SQLs in test file
 		final int expectedValidSQLs = 91;
-		ArrayList<String> sqls = new SQLReader("mysql.general.log").parseSqlFile();
+		ArrayList<Command> sqls = new CommandsReader("mysql.general.log").parseCommandsFile();
 		
 		assertEquals(expectedValidSQLs, sqls.size());
 	}
 	
 	public void test_negative_SqlReader()
 	{
-		try { new SQLReader(""); } catch (Exception e) {};
+		try { new CommandsReader(""); } catch (Exception e) {};
 	}
 }

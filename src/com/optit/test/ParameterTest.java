@@ -34,7 +34,7 @@ public class ParameterTest extends TestCase
 		assertEquals("port", Parameters.port);
 		assertEquals("sessions", Parameters.sessions);
 		assertEquals("dbName", Parameters.dbName);
-		assertEquals("sqlfile", Parameters.sqlfile);
+		assertEquals("inputFile", Parameters.inputFile);
 		assertEquals("user", Parameters.user);
 	}
 }
