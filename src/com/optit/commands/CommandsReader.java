@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import oracle.kv.Key;
 import oracle.kv.Value;
 
+import com.optit.Parameters;
 import com.optit.logger.Logger;
 
 /**
@@ -45,19 +46,18 @@ public class CommandsReader
 	boolean bOracleFile = false;
 
 	/**************************** KV store specific variables *****************************/
-	private static final String KVPATTERN = "((/\\w+)*(/-)(/\\w+)*)\\|\\|(.+$)";
+	private static final String KVPATTERN = "((/\\w+)*((/-)|(/))(/\\w+)*)\\|\\|(.+$)";
 	
 	/**************************** TextFile specific variables *****************************/
 	private static String TEXTFILEPATTERN= "(.+)(;$)";
 	
 	/**
 	 * Creates a new CommandsReader instance
-	 * @param filePath Path to the file that should be parsed
 	 */
-	public CommandsReader (String filePath)
+	public CommandsReader ()
 		throws Exception
 	{
-		this.commandsFilePath = FileSystems.getDefault().getPath(filePath);
+		this.commandsFilePath = FileSystems.getDefault().getPath(Parameters.getInstance().getParameters().getProperty(Parameters.inputFile));
 		
 		// Multiple files are not supported yet, therefore no directory can be specified!
 		if (Files.isDirectory(commandsFilePath, new LinkOption[] {}))

@@ -4,14 +4,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import javax.sql.DataSource;
-
 import oracle.jdbc.pool.OracleDataSource;
+import oracle.kv.FaultException;
+import oracle.kv.KVStoreConfig;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.optit.Parameters;
 import com.optit.commands.Command;
 import com.optit.commands.CommandsReader;
+import com.optit.connection.LoaderDataSource;
 import com.optit.logger.Logger;
 
 /**
@@ -21,8 +22,6 @@ import com.optit.logger.Logger;
  */
 public class Executor
 {
-	private final Properties parameters;
-	
 	/**
 	 * Inner class for ShutDown hook. Needed in order to stop all threads gracefully
 	 * @author gvenzl
@@ -58,59 +57,66 @@ public class Executor
 	}
 	
 	/**
-	 * This constructor creates a new Executor instance
-	 * @param parameters A instance of the Parameter object that contains the runtime parameters
-	 */
-	public Executor (Properties parameters)	{
-		this.parameters = parameters;
-	}
-	
-	/**
 	 * This method initializes a new data source to the database
 	 * @return A new DataSource instance to the database. NULL if the DataSource couldn't be established.
 	 * @throws SQLException Any SQL/DB exception during database connection establishment
 	 */
-	private DataSource initializeDataSource()
-		throws SQLException
+	private LoaderDataSource initializeDataSource()
+		throws SQLException, FaultException
 	{
+		Properties parameters = Parameters.getInstance().getParameters();
+		String host = parameters.getProperty(Parameters.host);
+		String port = parameters.getProperty(Parameters.port);
+		String dbName = parameters.getProperty(Parameters.dbName);
+		String user = parameters.getProperty(Parameters.user);
+		String password = parameters.getProperty(Parameters.password);
+		
 		Logger.log("Initialise the DataSource...");
-		Logger.log("Database type: " + parameters.getProperty(Parameters.databaseType));
+		Logger.log("Database type: " + Parameters.getInstance().getParameters().getProperty(Parameters.databaseType));
 	
-		DataSource ds = null;
+		LoaderDataSource dataSource = null;
 		String url = "";
+		
 		switch (parameters.getProperty(Parameters.databaseType))
 		{
 			case "oracle":
 			{
-				ds = new OracleDataSource();
-				url = "jdbc:oracle:thin:" + parameters.getProperty(Parameters.user) + "/" + parameters.getProperty(Parameters.password) + "@//" +
-						parameters.getProperty(Parameters.host) + ":" + parameters.getProperty(Parameters.port) + "/" + parameters.getProperty(Parameters.dbName);
-				((OracleDataSource) ds).setURL(url);
-				((OracleDataSource) ds).setImplicitCachingEnabled(true);
+				OracleDataSource ods = new OracleDataSource();
+				url = "jdbc:oracle:thin:" + user + "/" + password + "@//" + host + ":" + port + "/" + dbName;
+				ods.setURL(url);
+				ods.setImplicitCachingEnabled(true);
+				
+				// Test connection establishment
+				ods.getConnection();
+				dataSource = new LoaderDataSource(ods);
 				break;
 			}
 			case "mysql":
 			{
-				ds = new MysqlDataSource();
-				url = "jdbc:mysql://" + parameters.getProperty(Parameters.host) + ":" + parameters.getProperty(Parameters.port) + "/" + parameters.getProperty(Parameters.dbName) +
-							"?user=" + parameters.getProperty(Parameters.user) + "&password=" + parameters.getProperty(Parameters.password);
-				((MysqlDataSource) ds).setURL(url);
+				MysqlDataSource mysqlds = new MysqlDataSource();
+				url = "jdbc:mysql://" + host + ":" + port + "/" + dbName + "?user=" + user + "&password=" + password;
+				mysqlds.setURL(url);
+				
+				// Test connection establishment
+				mysqlds.getConnection();
+				dataSource = new LoaderDataSource(mysqlds);
 				break;
 			}
 			case "kvstore":
 			{
-				//TODO: Implement KVStore Data Source
-				//ds = (DataSource) new KVDataSource(parameters.getProperty(Parameters.dbName), parameters.getProperty(Parameters.host) + ":" + parameters.getProperty(Parameters.port));
+				dataSource = new LoaderDataSource(new KVStoreConfig(dbName, host + ":" + port));
 				break;
 			}
 			default:
 			{
 				Logger.log("Wrong database type specified! Cannot establish database connection!");
+				throw new RuntimeException("Wrong database type specified! " + parameters.getProperty(Parameters.databaseType) + " is not supported!");
 			}
 		}
+
 		Logger.logVerbose("URL used to connect: " + url);
 		
-		return ds; 
+		return dataSource; 
 	}
 
 	/**
@@ -121,53 +127,61 @@ public class Executor
 		try
 		{
 			// Initialize the Data Source
-			DataSource dbDataSource = initializeDataSource();
-			if (dbDataSource != null) {
-				// Parse all SQLs into a ArrayList 
-				try	{
-					ArrayList<Command> commands = new CommandsReader(parameters.getProperty(Parameters.inputFile)).parseCommandsFile();
+			LoaderDataSource dataSource = initializeDataSource();
+			// Parse all SQLs into a ArrayList 
+			try	{
+				ArrayList<Command> commands = new CommandsReader().parseCommandsFile();
+				
+				// Only execute tests if LinkedList is filled (not filled if parse error occurred)
+				if (!commands.isEmpty())
+				{
+					// Start and execute load threads
+					int sessions = Integer.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.sessions)).intValue();
+					Logger.log("Starting concurrent sessions: " + sessions);
 					
-					// Only execute tests if LinkedList is filled (not filled if parse error occurred)
-					if (!commands.isEmpty())
+					ExecutorThread[] threads = new ExecutorThread[sessions];
+					for (int iSession=0;iSession<sessions;iSession++)
 					{
-						// Start and execute load threads
-						int sessions = Integer.valueOf(parameters.getProperty(Parameters.sessions)).intValue();
-						Logger.log("Starting concurrent sessions: " + sessions);
-						
-						ExecutorThread[] threads = new ExecutorThread[sessions];
-						for (int iSession=0;iSession<sessions;iSession++)
-						{
-							threads[iSession] = new ExecutorThread(dbDataSource.getConnection(), commands, Boolean.valueOf(parameters.getProperty(Parameters.ignoreErrors)).booleanValue());
-							threads[iSession].setName("Loader");
-							threads[iSession].start();
+						switch ((String)Parameters.getInstance().getParameters().get(Parameters.databaseType)) {
+							case "oracle":
+							case "mysql": {
+								threads[iSession] = new ExecutorThread(dataSource.getDBConnection(), commands);
+								break;
+							}
+							case "kvstore": {
+								threads[iSession] = new ExecutorThread(dataSource.getKVConnection(), commands);
+								break;
+							}
 						}
 						
-						// Add shutdown hook for Ctrl+C capture
-						Runtime.getRuntime().addShutdownHook(new ShutDown(threads));
-						
-						// Wait for all threads to finish
-						for (int iThread=0;iThread<threads.length;iThread++)
+						threads[iSession].setName("Loader");
+						threads[iSession].start();
+					}
+					
+					// Add shutdown hook for Ctrl+C capture
+					Runtime.getRuntime().addShutdownHook(new ShutDown(threads));
+					
+					// Wait for all threads to finish
+					for (int iThread=0;iThread<threads.length;iThread++)
+					{
+						try
 						{
-							try
-							{
-								threads[iThread].join();
-							}
-							catch (InterruptedException e)
-							{
-								// Ignore thread interrupt!
-							}
+							threads[iThread].join();
+						}
+						catch (InterruptedException e)
+						{
+							// Ignore thread interrupt!
 						}
 					}
 				}
-				catch (Exception e)
-				{
-					Logger.log("Error during input file parsing: " + e.getMessage());
-					e.printStackTrace(System.err);
-				}
 			}
-			
+			catch (Exception e)
+			{
+				Logger.log("Error during input file parsing: " + e.getMessage());
+				e.printStackTrace(System.err);
+			}
 		}
-		catch (SQLException e)
+		catch (Exception e)
 		{
 			Logger.log("Error during database connection establishment: " + e.getMessage());
 			e.printStackTrace(System.err);

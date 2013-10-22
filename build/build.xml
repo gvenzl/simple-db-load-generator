@@ -84,7 +84,7 @@
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="com.optit.SimpleLoadGenerator"/>
-				<attribute name="Class-Path" value="ojdbc6.jar mysql-connector-java-5.1.21-bin.jar"/>
+				<attribute name="Class-Path" value="ojdbc6.jar mysql-connector-java-5.1.21-bin.jar kvclient.jar"/>
 			</manifest>
 		</jar>
 	</target>

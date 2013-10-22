@@ -3,7 +3,6 @@ package com.optit;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Properties;
 
 import com.optit.execute.Executor;
 import com.optit.logger.Logger;
@@ -27,7 +26,7 @@ public class SimpleLoadGenerator
         Logger.log("[-host]			Database machine host name");
         Logger.log("[-port]			Listener port of the database listener");
         Logger.log("[-dbName]		Database name/service name");
-        Logger.log("[-databaseType]		Database type: oracle|mysql");
+        Logger.log("[-databaseType]		Database type: oracle|mysql|kvstore");
         Logger.log("[-sessions]		Amount of sessions that should execute the queries");
         Logger.log("[-inputFile]		Path to file containing the commands (e.g. SQL statements or Key Values) to execute");
         Logger.log("[-ignoreErrors]		Ignore errors caused by SQL statements and carry on executing");
@@ -37,7 +36,7 @@ public class SimpleLoadGenerator
         Logger.log("If a properties file (SimpleLoadGenerator.properties) exists, the system will load the parameters from there!");
         Logger.log("You will not need to specify any additional parameter. However, the properties file will only be read when you do not pass any parameters on!");
         Logger.log("Each SQL statement in the plain text sql file has to be delimited by \";\\n\".");
-        Logger.log("The application does not do a implicit commit! If you want to execute DML statements you will have to include a COMMIT statement!");
+        Logger.log("The application does not do a implicit commit if you run against a relational database! If you want to execute DML statements you will have to include a COMMIT statement!");
 	}
 
 	/**
@@ -46,14 +45,6 @@ public class SimpleLoadGenerator
 	 */
 	public static void main(String[] args)
 	{
-		// Initialize application parameter properties
-		Properties parameters = new Properties();
-
-		// Set default parameters
-		parameters.setProperty(Parameters.sessions, "1");
-		parameters.setProperty(Parameters.verbose, "false");
-		parameters.setProperty(Parameters.ignoreErrors, "false");
-		
 		// No parameters passed, read parameters from properties file
 		// Do not attempt to read the properties file if any parameter has been passed via the CLI
 		if (args.length == 0)
@@ -62,7 +53,7 @@ public class SimpleLoadGenerator
 			
 			try(FileInputStream fis = new FileInputStream(propertiesFileName))
 			{
-				parameters.load(fis);
+				Parameters.getInstance().getParameters().load(fis);
 			}
 			catch (IOException ioEx)
 			{
@@ -95,47 +86,47 @@ public class SimpleLoadGenerator
 		
 		for (int i=0;i<args.length;i++)
 		{
-			if (args[i].equals("-" + Parameters.user))
+			if (args[i].equalsIgnoreCase("-" + Parameters.user))
 			{
-				parameters.setProperty(Parameters.user, args[++i]);
+				Parameters.getInstance().getParameters().setProperty(Parameters.user, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.password))
+			else if (args[i].equalsIgnoreCase("-" + Parameters.password))
 			{
-				parameters.setProperty(Parameters.password, args[++i]);
+				Parameters.getInstance().getParameters().setProperty(Parameters.password, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.host))
+			else if (args[i].equalsIgnoreCase("-" + Parameters.host))
 			{
-				parameters.setProperty(Parameters.host, args[++i]);
+				Parameters.getInstance().getParameters().setProperty(Parameters.host, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.port))
+			else if (args[i].equalsIgnoreCase("-" + Parameters.port))
 			{
-				parameters.setProperty(Parameters.port, args[++i]);
+				Parameters.getInstance().getParameters().setProperty(Parameters.port, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.dbName))
+			else if (args[i].equalsIgnoreCase("-" + Parameters.dbName))
 			{
-				parameters.setProperty(Parameters.dbName, args[++i]);
+				Parameters.getInstance().getParameters().setProperty(Parameters.dbName, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.databaseType))
+			else if (args[i].equalsIgnoreCase("-" + Parameters.databaseType))
 			{
-				parameters.setProperty(Parameters.databaseType, args[++i]);
+				Parameters.getInstance().getParameters().setProperty(Parameters.databaseType, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.sessions))
+			else if (args[i].equalsIgnoreCase("-" + Parameters.sessions))
 			{
-				parameters.setProperty(Parameters.sessions, args[++i]);
+				Parameters.getInstance().getParameters().setProperty(Parameters.sessions, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.inputFile))
+			else if (args[i].equalsIgnoreCase("-" + Parameters.inputFile))
 			{
-				parameters.setProperty(Parameters.inputFile, args[++i]);
+				Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, args[++i]);
 			}
-			else if (args[i].equals("-" + Parameters.verbose))
+			else if (args[i].equalsIgnoreCase("-" + Parameters.verbose))
 			{
-				parameters.setProperty(Parameters.verbose, "true");
+				Parameters.getInstance().getParameters().setProperty(Parameters.verbose, "true");
 			}
-			else if (args[i].equals("-" + Parameters.ignoreErrors))
+			else if (args[i].equalsIgnoreCase("-" + Parameters.ignoreErrors))
 			{
-				parameters.setProperty(Parameters.ignoreErrors, "true");
+				Parameters.getInstance().getParameters().setProperty(Parameters.ignoreErrors, "true");
 			}
-			else if (args[i].equals("-help") || args[i].equals("--help") || args[i].equals("-h") || args[i].equals("-?"))
+			else if (args[i].equalsIgnoreCase("-help") || args[i].equals("--help") || args[i].equals("-h") || args[i].equals("-?"))
 			{
 				printHelp();
 				System.exit(0);
@@ -150,13 +141,13 @@ public class SimpleLoadGenerator
 		}
 		
 		// Set debug flag based on parameter
-		Logger.setVerbose(parameters.getProperty(Parameters.verbose).equalsIgnoreCase("true"));
+		Logger.setVerbose(Parameters.getInstance().getParameters().getProperty(Parameters.verbose).equalsIgnoreCase("true"));
 		
 		// main try/catch block to avoid exception being thrown out not handled
 		try
 		{
 			// Create executor, pass on parameters and run tests
-			Executor executor = new Executor(parameters);
+			Executor executor = new Executor();
 			executor.runTests();
 		}
 		catch (Exception e)
