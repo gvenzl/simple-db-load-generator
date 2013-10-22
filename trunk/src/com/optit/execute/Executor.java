@@ -159,13 +159,13 @@ public class Executor
 			try {
     			for (int iSession=0;iSession<sessions;iSession++)
     			{
-    				switch ((String)Parameters.getInstance().getParameters().get(Parameters.dbType)) {
-    					case "oracle":
-    					case "mysql": {
+    				switch (DbType.getType(Parameters.getInstance().getParameters().getProperty(Parameters.dbType))) {
+    					case ORACLE:
+    					case MYSQL: {
     						threads[iSession] = new ExecutorThread(dataSource.getDBConnection(), commands);
     						break;
     					}
-    					case "kvstore": {
+    					case NOSQL: {
     						threads[iSession] = new ExecutorThread(dataSource.getKVConnection(), commands);
     						break;
     					}
