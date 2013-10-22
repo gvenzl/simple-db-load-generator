@@ -21,6 +21,7 @@ public class CommandTest extends TestCase
 		assertEquals(command, cmd.getCommand());
 	}
 	
+	@Test
 	public void test_ConstructorKeyValue() {
 		Command cmd = new Command(key, value);
 		assertEquals(Command.TYPE.KV, cmd.getType());
@@ -28,14 +29,17 @@ public class CommandTest extends TestCase
 		assertEquals(value, cmd.getValue());
 	}
 	
+	@Test
 	public void test_getCommand() {
 		assertEquals(command, new Command(command).getCommand());
 	}
 	
+	@Test
 	public void test_getKey() {
 		assertEquals(key, new Command(key, null).getKey());
 	}
 	
+	@Test
 	public void test_getValue() {
 		assertEquals(value, new Command(null, value).getValue());
 	}

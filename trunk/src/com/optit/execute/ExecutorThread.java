@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
+import oracle.kv.KVStore;
+
+import com.optit.Parameters;
 import com.optit.commands.Command;
 import com.optit.logger.Logger;
 import com.optit.util.RandomIterator;
@@ -22,32 +25,46 @@ public class ExecutorThread extends Thread
 {
 	private static boolean ignoreErrors = false;
 	private Connection conn;
+	private KVStore kvStoreConn;
 	private List<Command> commands;
+	
+	private enum TYPE { RDBMS, KV };
+	private final TYPE type;
 	
 	private boolean stop = false;
 	
 	/**
 	 * Creates a new ExecutorThread object
 	 * @param conn A connection to the database
-	 * @param sqls A List of all sqls that should be executed
-	 * @param ignoreErrs Flag that defines if errors caused by SQLs should force the thread to stop or not
+	 * @param commands A List of all commands that should be executed
 	 */
-	public ExecutorThread(Connection conn, List<Command> commands, boolean ignoreErrs)
+	public ExecutorThread(Connection conn, List<Command> commands)
 	{
 		this.conn = conn;
 		this.commands = commands;
-		ignoreErrors = ignoreErrs;
+		ignoreErrors = Boolean.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.ignoreErrors)).booleanValue();
+		type = TYPE.RDBMS;
 		
-		// Only if connection is a SQL connection set AutoCommit to false
-		if (conn instanceof java.sql.Connection) {
-			try	{
-				this.conn.setAutoCommit(false);
-			}
-			catch (SQLException e) {
-				Logger.log("Could not set AutoCommit to false: " + e.getMessage());
-				Logger.log("Test will continue with default AutoCommit value!");
-			}
+		try {
+			this.conn.setAutoCommit(false);
 		}
+		catch (SQLException e) {
+			Logger.log("Could not set AutoCommit to false: " + e.getMessage());
+			Logger.log("Test will continue with default AutoCommit value!");
+		}
+	}
+	
+	/**
+	 * Creates a new ExecutorThread object
+	 * @param kvStore A connection to the KV store
+	 * @param commands A List of all commands that should be executed
+	 */
+	public ExecutorThread(KVStore kvStore, List<Command> commands)
+	{
+		this.kvStoreConn = kvStore;
+		this.commands = commands;
+		ignoreErrors = Boolean.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.ignoreErrors)).booleanValue();
+		type = TYPE.KV;
 	}
 	
 	/**
@@ -93,10 +110,11 @@ public class ExecutorThread extends Thread
 				}
 				
 				long startTime = 0;
+				long endTime = 0;
 				
-				switch (cmd.getType())
+				switch (type)
 				{
-					case SQL:
+					case RDBMS:
 					{
 						String sqlCommand = cmd.getCommand().trim();
 						try (PreparedStatement stmt = conn.prepareStatement(sqlCommand))
@@ -115,12 +133,14 @@ public class ExecutorThread extends Thread
 								while (rslt.next())	{
 									rows++;
 								}
+								endTime = System.currentTimeMillis();
 							}
 							else {
 								startTime = System.currentTimeMillis();
 								stmt.execute();
+								endTime = System.currentTimeMillis();
 							}
-							Logger.log(this.getFullName() + ": " + rows + " rows in set - (" + (System.currentTimeMillis()-startTime) + "ms)");					
+							Logger.log(this.getFullName() + ": " + rows + " rows in set - (" + (endTime - startTime) + "ms)");					
 						}
 						catch (SQLException e)
 						{
@@ -134,11 +154,16 @@ public class ExecutorThread extends Thread
 								stop = true;
 							}
 						}
+						break;
 					}
 					case KV:
 					{
-						//TODO: IMplement KV GET operation
-						//TODO: Implement KV PUT operations
+						startTime = System.currentTimeMillis();
+						kvStoreConn.get(cmd.getKey());
+						kvStoreConn.put(cmd.getKey(), cmd.getValue());
+						endTime = System.currentTimeMillis();
+						
+						Logger.log(this.getFullName() + ": Key '" + cmd.getKey().toString() + "' read and written (" + (endTime - startTime) + "ms)");
 						break;
 					}
 				}
@@ -155,18 +180,31 @@ public class ExecutorThread extends Thread
 				}
 			}
 		}
-		try
+
+		Logger.log(this.getFullName() + ": Closing Db connection...");
+
+		switch (type)
 		{
-			// Close database connection
-			Logger.log(this.getFullName() + ": Closing Db connection...");
-			conn.rollback();
-			conn.close();
+			case KV:
+			{
+				kvStoreConn.close();
+				break;
+			}
+			case RDBMS:
+			{
+				try {
+					// Close database connection
+					conn.rollback(); 
+					conn.close();
+				}
+				catch (SQLException e) {
+					// Ignore exception while closing, program is about to stop
+					Logger.logVerbose(this.getFullName() + ": Error closing Db connection: " + e.getMessage());
+				}
+			}
+			
 		}
-		catch (SQLException e)
-		{
-			// Ignore exception while closing, program is about to stop
-			Logger.logVerbose(this.getFullName() + ": Error closing Db connection: " + e.getMessage());
-		}
+
 		Logger.log(this.getFullName() + ": Stopping...");
 	}
 }

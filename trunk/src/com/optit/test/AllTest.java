@@ -9,9 +9,7 @@ import junit.framework.TestSuite;
  */
 public class AllTest extends TestSuite
 {
-	public static Test suite()
-	{
-		
+	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for all JUnit tests");
 		suite.addTestSuite(SimpleLoadGeneratorTest.class);
 		suite.addTestSuite(LoggerTest.class);
@@ -19,6 +17,8 @@ public class AllTest extends TestSuite
 		suite.addTestSuite(CommandsReaderTest.class);
 		suite.addTestSuite(RandomIteratorTest.class);
 		suite.addTestSuite(CommandTest.class);
+		suite.addTestSuite(LoaderDataSourceTest.class);
+		
 		return suite;
 	}
 }
