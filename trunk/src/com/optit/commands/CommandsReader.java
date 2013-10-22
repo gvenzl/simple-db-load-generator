@@ -55,20 +55,19 @@ public class CommandsReader
 	 * Creates a new CommandsReader instance
 	 */
 	public CommandsReader ()
-		throws Exception
 	{
 		this.commandsFilePath = FileSystems.getDefault().getPath(Parameters.getInstance().getParameters().getProperty(Parameters.inputFile));
 		
 		// Multiple files are not supported yet, therefore no directory can be specified!
 		if (Files.isDirectory(commandsFilePath, new LinkOption[] {}))
 		{
-			throw new Exception("The passed file " + commandsFilePath.toAbsolutePath().toString() + " is a directory!" +
+			throw new RuntimeException("The passed file " + commandsFilePath.toAbsolutePath().toString() + " is a directory!" +
 									"Executing multiple files is not supported yet but planned for the future!");
 		}
 		// File not readable
 		else if (!Files.isReadable(commandsFilePath))
 		{
-			throw new Exception("File " + commandsFilePath.toAbsolutePath().toString() + " is not readable!");
+			throw new RuntimeException("File " + commandsFilePath.toAbsolutePath().toString() + " is not readable!");
 		}
 		this.commandsList = new ArrayList<Command>();
 	}
