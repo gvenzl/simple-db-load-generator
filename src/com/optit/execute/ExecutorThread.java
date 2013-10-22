@@ -12,6 +12,7 @@ import oracle.kv.KVStore;
 
 import com.optit.Parameters;
 import com.optit.commands.Command;
+import com.optit.connection.DbType;
 import com.optit.logger.Logger;
 import com.optit.util.RandomIterator;
 
@@ -28,9 +29,6 @@ public class ExecutorThread extends Thread
 	private KVStore kvStoreConn;
 	private List<Command> commands;
 	
-	private enum TYPE { RDBMS, KV };
-	private final TYPE type;
-	
 	private boolean stop = false;
 	
 	/**
@@ -43,7 +41,6 @@ public class ExecutorThread extends Thread
 		this.conn = conn;
 		this.commands = commands;
 		ignoreErrors = Boolean.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.ignoreErrors)).booleanValue();
-		type = TYPE.RDBMS;
 		
 		try {
 			this.conn.setAutoCommit(false);
@@ -64,7 +61,6 @@ public class ExecutorThread extends Thread
 		this.kvStoreConn = kvStore;
 		this.commands = commands;
 		ignoreErrors = Boolean.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.ignoreErrors)).booleanValue();
-		type = TYPE.KV;
 	}
 	
 	/**
@@ -90,15 +86,16 @@ public class ExecutorThread extends Thread
 		// New Random generator for random wait
 		Random random = new Random();
 		
+		// Database type
+		DbType dbType = DbType.getType(Parameters.getInstance().getParameters().getProperty(Parameters.dbType));
+		
 		// Run as long as the Thread doesn't get interrupted (via Ctrl+C)
-		while (!stop)
-		{
+		while (!stop) {
 			// Iterate over all SQLs
 			RandomIterator<Command> iterator = new RandomIterator<Command>(commands);
 			
 			// Endless loop for commands until thread has to stop - loop will be broken by NoSuchElementException of the iterator
-			while (!stop)
-			{
+			while (!stop) {
 				Command cmd;
 
 				try	{ cmd = iterator.next(); }
@@ -112,9 +109,10 @@ public class ExecutorThread extends Thread
 				long startTime = 0;
 				long endTime = 0;
 				
-				switch (type)
+				switch (dbType)
 				{
-					case RDBMS:
+					case MYSQL:
+					case ORACLE:
 					{
 						String sqlCommand = cmd.getCommand().trim();
 						try (PreparedStatement stmt = conn.prepareStatement(sqlCommand))
@@ -148,22 +146,32 @@ public class ExecutorThread extends Thread
 							Logger.log(this.getFullName() + ": " + e.getMessage());
 								
 							// Only if errors should not be ignored stop thread
-							if (!ignoreErrors)
-							{
+							if (!ignoreErrors) {
 								Logger.log(this.getFullName() + ": Stopping thread due to SQL error!");
 								stop = true;
 							}
 						}
 						break;
 					}
-					case KV:
+					case NOSQL:
 					{
-						startTime = System.currentTimeMillis();
-						kvStoreConn.get(cmd.getKey());
-						kvStoreConn.put(cmd.getKey(), cmd.getValue());
-						endTime = System.currentTimeMillis();
+						try {
+    						startTime = System.currentTimeMillis();
+    						kvStoreConn.get(cmd.getKey());
+    						kvStoreConn.put(cmd.getKey(), cmd.getValue());
+    						endTime = System.currentTimeMillis();
 						
-						Logger.log(this.getFullName() + ": Key '" + cmd.getKey().toString() + "' read and written (" + (endTime - startTime) + "ms)");
+    						Logger.log(this.getFullName() + ": Key '" + cmd.getKey().toString() + "' read and written (" + (endTime - startTime) + "ms)");
+						} catch (Exception e) {
+							Logger.log(this.getFullName() + ": Error detected!");
+							Logger.log(this.getFullName() + ": " + e.getMessage());
+								
+							// Only if errors should not be ignored stop thread
+							if (!ignoreErrors) {
+								Logger.log(this.getFullName() + ": Stopping thread due to error!");
+								stop = true;
+							}
+						}
 						break;
 					}
 				}
@@ -183,15 +191,10 @@ public class ExecutorThread extends Thread
 
 		Logger.log(this.getFullName() + ": Closing Db connection...");
 
-		switch (type)
+		switch (dbType)
 		{
-			case KV:
-			{
-				kvStoreConn.close();
-				break;
-			}
-			case RDBMS:
-			{
+			case MYSQL:
+			case ORACLE: {
 				try {
 					// Close database connection
 					conn.rollback(); 
@@ -201,6 +204,10 @@ public class ExecutorThread extends Thread
 					// Ignore exception while closing, program is about to stop
 					Logger.logVerbose(this.getFullName() + ": Error closing Db connection: " + e.getMessage());
 				}
+			}
+			case NOSQL: {
+				kvStoreConn.close();
+				break;
 			}
 			
 		}

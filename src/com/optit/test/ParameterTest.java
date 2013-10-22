@@ -27,7 +27,7 @@ public class ParameterTest extends TestCase
 	@Test
 	public void test_values()
 	{
-		assertEquals("databaseType", MyParams.databaseType);
+		assertEquals("dbType", MyParams.dbType);
 		assertEquals("verbose", Parameters.verbose);
 		assertEquals("host", Parameters.host);
 		assertEquals("password", Parameters.password);
