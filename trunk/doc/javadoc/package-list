@@ -1,5 +1,6 @@
 com.optit
+com.optit.commands
+com.optit.connection
 com.optit.execute
 com.optit.logger
-com.optit.sql
 com.optit.util
