@@ -33,6 +33,12 @@ public class CommandsReaderTest extends TestCase
 		ArrayList<Command> sqls = new CommandsReader().parseCommandsFile();
 		
 		assertEquals(expectedParsedSQLs, sqls.size());
+		
+		// Iterate over all objects and check for not null
+		for (Command cmd : sqls)
+		{
+			assertNotNull(cmd.getCommand());
+		}
 	}
 	
 	@Test
@@ -45,6 +51,12 @@ public class CommandsReaderTest extends TestCase
 		ArrayList<Command> sqls = new CommandsReader().parseCommandsFile();
 		
 		assertEquals(expectedValidSQLs, sqls.size());
+		
+		// Iterate over all objects and check for not null
+		for (Command cmd : sqls)
+		{
+			assertNotNull(cmd.getCommand());
+		}
 	}
 	
 	@Test
@@ -55,6 +67,13 @@ public class CommandsReaderTest extends TestCase
 		ArrayList<Command> kvs = new CommandsReader().parseCommandsFile();
 		
 		assertEquals(expectedKVs, kvs.size());
+		
+		// Iterate over all objects and check for not null
+		for (Command cmd : kvs)
+		{
+			assertNotNull(cmd.getKey());
+			assertFalse(cmd.getValue().toString().equals("<Value format:NONE bytes:>"));
+		}
 	}
 	
 	@Test
