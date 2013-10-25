@@ -160,7 +160,7 @@ public class CommandsReader
 					Key key = Key.fromString(kVFileMatcher.replaceAll("$1"));
 
 					// Extract value
-					Value value = Value.createValue(kVFileMatcher.replaceAll("$5").getBytes());
+					Value value = Value.createValue(kVFileMatcher.replaceAll("$7").getBytes());
 					
 					commandsList.add(new Command(key, value));
 				}
