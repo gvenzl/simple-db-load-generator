@@ -1,4 +1,5 @@
 # SimpleLoadGenerator
+Copyright 2018 Gerald Venzl
 
 ## Content
 
@@ -269,7 +270,9 @@ Following parameter need to be set:
 
 Example:
 
-     java -jar SimpleLoadGenerator.jar -user scott -password tiger -host localhost -port 1521 -sid MYDB -databaseType oracle -ignoreErrors -sqlfile ./SQLs.txt -sessions 10 -ignoreErrors
+     java -jar SimpleLoadGenerator.jar -user scott -password tiger \
+     -host localhost -port 1521 -sid MYDB -databaseType oracle \
+     -ignoreErrors -sqlfile ./SQLs.txt -sessions 10 -ignoreErrors
 
 # License
     Copyright 2018 Gerald Venzl
