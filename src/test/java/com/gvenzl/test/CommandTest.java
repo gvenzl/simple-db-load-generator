@@ -1,4 +1,4 @@
-package com.optit.test;
+package com.gvenzl.test;
 
 import junit.framework.TestCase;
 import oracle.kv.Key;
@@ -6,7 +6,7 @@ import oracle.kv.Value;
 
 import org.junit.Test;
 
-import com.optit.commands.Command;
+import com.gvenzl.commands.Command;
 
 public class CommandTest extends TestCase
 {

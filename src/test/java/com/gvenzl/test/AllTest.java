@@ -1,4 +1,4 @@
-package com.optit.test;
+package com.gvenzl.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

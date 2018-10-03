@@ -1,4 +1,4 @@
-package com.optit.test;
+package com.gvenzl.test;
 
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.optit.util.RandomIterator;
+import com.gvenzl.util.RandomIterator;
 
 public class RandomIteratorTest extends TestCase
 {

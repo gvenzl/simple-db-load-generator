@@ -1,4 +1,4 @@
-package com.optit.commands;
+package com.gvenzl.commands;
 
 import oracle.kv.Key;
 import oracle.kv.Value;

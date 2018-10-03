@@ -1,4 +1,4 @@
-package com.optit.execute;
+package com.gvenzl.execute;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,11 +10,11 @@ import java.util.Random;
 
 import oracle.kv.KVStore;
 
-import com.optit.Parameters;
-import com.optit.commands.Command;
-import com.optit.connection.DbType;
-import com.optit.logger.Logger;
-import com.optit.util.RandomIterator;
+import com.gvenzl.Parameters;
+import com.gvenzl.commands.Command;
+import com.gvenzl.connection.DbType;
+import com.gvenzl.logger.Logger;
+import com.gvenzl.util.RandomIterator;
 
 /**
  * The ExecutorThread is a thread having one connection to the database

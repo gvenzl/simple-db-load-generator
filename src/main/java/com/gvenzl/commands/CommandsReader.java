@@ -1,4 +1,4 @@
-package com.optit.commands;
+package com.gvenzl.commands;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 import oracle.kv.Key;
 import oracle.kv.Value;
 
-import com.optit.Parameters;
-import com.optit.logger.Logger;
+import com.gvenzl.Parameters;
+import com.gvenzl.logger.Logger;
 
 /**
  * The CommandsReader class parses a file for commands like SQL statements or Key and Values

@@ -1,4 +1,4 @@
-package com.optit.execute;
+package com.gvenzl.execute;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,12 +9,12 @@ import oracle.kv.FaultException;
 import oracle.kv.KVStoreConfig;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-import com.optit.Parameters;
-import com.optit.commands.Command;
-import com.optit.commands.CommandsReader;
-import com.optit.connection.DbType;
-import com.optit.connection.LoaderDataSource;
-import com.optit.logger.Logger;
+import com.gvenzl.Parameters;
+import com.gvenzl.commands.Command;
+import com.gvenzl.commands.CommandsReader;
+import com.gvenzl.connection.DbType;
+import com.gvenzl.connection.LoaderDataSource;
+import com.gvenzl.logger.Logger;
 
 /**
  * The executor class is responsible to establish the data source to the database, run the CommandsReader to parse the sql file 

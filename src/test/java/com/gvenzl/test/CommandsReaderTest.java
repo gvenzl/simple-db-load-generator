@@ -1,4 +1,4 @@
-package com.optit.test;
+package com.gvenzl.test;
 
 import java.util.ArrayList;
 
@@ -6,9 +6,9 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import com.optit.Parameters;
-import com.optit.commands.Command;
-import com.optit.commands.CommandsReader;
+import com.gvenzl.Parameters;
+import com.gvenzl.commands.Command;
+import com.gvenzl.commands.CommandsReader;
 
 /**
  * @author gvenzl

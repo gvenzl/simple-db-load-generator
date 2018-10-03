@@ -1,4 +1,4 @@
-package com.optit.connection;
+package com.gvenzl.connection;
 
 import java.sql.Connection;
 import java.sql.SQLException;

@@ -1,12 +1,12 @@
-package com.optit;
+package com.gvenzl;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.optit.execute.Executor;
-import com.optit.logger.Logger;
+import com.gvenzl.execute.Executor;
+import com.gvenzl.logger.Logger;
 
 /**
  * The SimpleLoadGenerator class is the main class and entry point for the generator tool.
@@ -20,7 +20,7 @@ public class SimpleLoadGenerator
 	 */
 	public static void printHelp()
 	{
-		Logger.log("Usage: java -jar SimpleLoadGenerator.jar|com.optit.SimpleLoadGenerator -user [username] -password [password] -host [host] -port [port] -dbName [dbName] -dbType [dbType] -sessions [Amount of sessions] -inputFile [inputFile] -ignoreErrors -verbose -help|-h|--help|-?");
+		Logger.log("Usage: java -jar SimpleLoadGenerator.jar|com.gvenzl.SimpleLoadGenerator -user [username] -password [password] -host [host] -port [port] -dbName [dbName] -dbType [dbType] -sessions [Amount of sessions] -inputFile [inputFile] -ignoreErrors -verbose -help|-h|--help|-?");
         Logger.log("");
         Logger.log("[-user]			The database username");
         Logger.log("[-password]		The password of the database user");

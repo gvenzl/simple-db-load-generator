@@ -1,10 +1,10 @@
-package com.optit.test;
+package com.gvenzl.test;
 
 import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import com.optit.logger.Logger;
+import com.gvenzl.logger.Logger;
 
 /**
  * @author gvenzl

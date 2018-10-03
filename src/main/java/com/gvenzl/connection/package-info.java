@@ -5,4 +5,4 @@
  * @author gvenzl
  *
  */
-package com.optit.connection;
+package com.gvenzl.connection;

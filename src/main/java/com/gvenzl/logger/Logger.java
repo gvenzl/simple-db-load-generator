@@ -1,4 +1,4 @@
-package com.optit.logger;
+package com.gvenzl.logger;
 
 /**
  * The Logger is used as an interface for logging information

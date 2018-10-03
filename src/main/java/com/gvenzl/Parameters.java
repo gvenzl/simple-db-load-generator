@@ -1,4 +1,4 @@
-package com.optit;
+package com.gvenzl;
 
 import java.util.Properties;
 

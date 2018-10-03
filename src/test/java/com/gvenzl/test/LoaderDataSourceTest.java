@@ -1,4 +1,4 @@
-package com.optit.test;
+package com.gvenzl.test;
 
 import junit.framework.TestCase;
 import oracle.kv.KVStoreConfig;
@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import sun.jdbc.odbc.ee.DataSource;
 
-import com.optit.connection.LoaderDataSource;
+import com.gvenzl.connection.LoaderDataSource;
 
 public class LoaderDataSourceTest extends TestCase
 {

@@ -1,4 +1,4 @@
-package com.optit.connection;
+package com.gvenzl.connection;
 
 /**
  * This enumeration represents the supported databases/stores to generate load against
