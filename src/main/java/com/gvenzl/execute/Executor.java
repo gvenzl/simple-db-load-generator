@@ -4,11 +4,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import com.mysql.cj.jdbc.MysqlDataSource;
 import oracle.jdbc.pool.OracleDataSource;
 import oracle.kv.FaultException;
 import oracle.kv.KVStoreConfig;
 
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import com.gvenzl.Parameters;
 import com.gvenzl.commands.Command;
 import com.gvenzl.commands.CommandsReader;
@@ -26,7 +26,7 @@ public class Executor
 	private LoaderDataSource dataSource;
 	
 	/**
-	 * Constructs a new Executer instance
+	 * Constructs a new Executor instance
 	 * @throws SQLException Any SQL/DB exception during database connection establishment
 	 * @throws FaultException Any NoSQL DB exception during connecting to the store
 	 */
