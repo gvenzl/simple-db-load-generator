@@ -209,8 +209,8 @@ public class CommandsReader
 	
 	/**
 	 * Checks whether a MySql command type and command is supported by SimpleLoadGenerator
-	 * @param commandType MySql command type (check ReadMe.txt for command type reference)
-	 * @param command MySql command (check ReadMe.txt for command reference)
+	 * @param commandType MySql command type (check README.md for command type reference)
+	 * @param command MySql command (check README.md for command reference)
 	 * @return A boolean indicating whether the command is supported (true) or not (false) 
 	 */
 	private boolean isSupportedMySqlCommand(String commandType, String command)
