@@ -1,5 +1,4 @@
 # SimpleLoadGenerator
-Copyright 2018 Gerald Venzl
 
 ## Content
 
