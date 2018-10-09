@@ -16,9 +16,8 @@ public class RandomIteratorTest extends TestCase
 	private RandomIterator<Integer> myRandomIterator;
 	
 	@Before
-	public void setUp() throws Exception
-	{
-		myTestList = new ArrayList<Integer>();
+	public void setUp() {
+		myTestList = new ArrayList<>();
 		
 		myTestList.add(1);
 		myTestList.add(2);
@@ -85,14 +84,14 @@ public class RandomIteratorTest extends TestCase
 	public void test_randomness()
 	{
 		
-		ArrayList<Integer> arrayList = new ArrayList<Integer>();
+		ArrayList<Integer> arrayList = new ArrayList<>();
 		
 		for(int i=0;i<10000;i++)
 		{
 			arrayList.add(i);
 		}
 		
-		RandomIterator<Integer> randomIterator2 = new RandomIterator<Integer>(arrayList);
+		RandomIterator<Integer> randomIterator2 = new RandomIterator<>(arrayList);
 		
 		for (int i=0;i<myTestList.size();i++)
 		{

@@ -17,16 +17,13 @@ import com.gvenzl.commands.CommandsReader;
 public class CommandsReaderTest extends TestCase
 {
 	@Test
-	public void test_SqlReader() throws Exception
-	{
+	public void test_SqlReader() {
 		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/allSqls.sql");
 		new CommandsReader();
 	}
 	
 	@Test
-	public void test_parseTextSqlFile()
-		throws Exception
-	{
+	public void test_parseTextSqlFile() {
 		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/allSqls.sql");
 		// Amount of SQLs in test file
 		final int expectedParsedSQLs = 50;
@@ -42,9 +39,7 @@ public class CommandsReaderTest extends TestCase
 	}
 	
 	@Test
-	public void test_parseMySqlGeneralLogFile()
-		throws Exception
-	{
+	public void test_parseMySqlGeneralLogFile() {
 		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/mysql.general.log");
 		// Amount of valid/supported SQLs in test file
 		final int expectedValidSQLs = 91;
@@ -60,7 +55,7 @@ public class CommandsReaderTest extends TestCase
 	}
 	
 	@Test
-	public void test_parseKVFile() throws Exception {
+	public void test_parseKVFile() {
 		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/kvdata.log");
 		// Amount of KVs in test file
 		final int expectedKVs = 11;
