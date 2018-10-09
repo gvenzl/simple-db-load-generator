@@ -43,12 +43,12 @@ import com.gvenzl.util.RandomIterator;
  * @author gvenzl
  *
  */
-public class ExecutorThread extends Thread
+class ExecutorThread extends Thread
 {
 	private static boolean ignoreErrors = false;
 	private Connection conn;
 	private KVStore kvStoreConn;
-	private List<Command> commands;
+	private final List<Command> commands;
 	
 	private boolean stop = false;
 	
@@ -61,7 +61,7 @@ public class ExecutorThread extends Thread
 	{
 		this.conn = conn;
 		this.commands = commands;
-		ignoreErrors = Boolean.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.ignoreErrors)).booleanValue();
+		ignoreErrors = Boolean.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.ignoreErrors));
 		
 		try {
 			this.conn.setAutoCommit(false);
@@ -81,14 +81,14 @@ public class ExecutorThread extends Thread
 	{
 		this.kvStoreConn = kvStore;
 		this.commands = commands;
-		ignoreErrors = Boolean.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.ignoreErrors)).booleanValue();
+		ignoreErrors = Boolean.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.ignoreErrors));
 	}
 	
 	/**
 	 * Returns the fully qualified thread name (name + id)
 	 * @return The fully qualified thread name
 	 */
-	public String getFullName()
+	private String getFullName()
 	{
 		return Thread.currentThread().getName() + "-" + Thread.currentThread().getId();
 	}
@@ -113,7 +113,7 @@ public class ExecutorThread extends Thread
 		// Run as long as the Thread doesn't get interrupted (via Ctrl+C)
 		while (!stop) {
 			// Iterate over all SQLs
-			RandomIterator<Command> iterator = new RandomIterator<Command>(commands);
+			RandomIterator<Command> iterator = new RandomIterator<>(commands);
 			
 			// Endless loop for commands until thread has to stop - loop will be broken by NoSuchElementException of the iterator
 			while (!stop) {
@@ -127,8 +127,8 @@ public class ExecutorThread extends Thread
 					break;
 				}
 				
-				long startTime = 0;
-				long endTime = 0;
+				long startTime;
+				long endTime;
 				
 				switch (dbType)
 				{

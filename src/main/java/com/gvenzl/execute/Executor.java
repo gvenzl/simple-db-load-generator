@@ -67,29 +67,28 @@ public class Executor
 	 */
 	private class ShutDown extends Thread
 	{
-		ExecutorThread[] threadsToStop;
+		final ExecutorThread[] threadsToStop;
 		
 		/**
 		 * Constructs a new ShutDown class
 		 * @param threads Started threads which need to be stopped again
 		 */
-		public ShutDown(ExecutorThread[] threads) {
+		ShutDown(ExecutorThread[] threads) {
 			this.threadsToStop = threads;
 		}
 		
 		@Override
 		public void run() {
 			// Set stop flag for each thread
-			for (int i=0;i<threadsToStop.length;i++) {
-				threadsToStop[i].stopThread();
+			for (ExecutorThread aThreadsToStop1 : threadsToStop) {
+				aThreadsToStop1.stopThread();
 			}
 			
 			// Wait until each thread has finished
-			for (int i=0;i<threadsToStop.length;i++) {
+			for (ExecutorThread aThreadsToStop : threadsToStop) {
 				try {
-					threadsToStop[i].join();
-				}
-				catch (InterruptedException e) { /* Ignore exception */ }
+					aThreadsToStop.join();
+				} catch (InterruptedException e) { /* Ignore exception */ }
 			}
 		}
 	}
@@ -115,7 +114,7 @@ public class Executor
 		Logger.log("Initialise the DataSource...");
 		Logger.log("Database type: " + dbType);
 	
-		LoaderDataSource dataSource = null;
+		LoaderDataSource dataSource;
 		String url = "";
 		
 		// Creating the datasource to the database. Extend this if you need to add additional support!
@@ -173,7 +172,7 @@ public class Executor
 		if (!commands.isEmpty())
 		{
 			// Start and execute load threads
-			int sessions = Integer.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.sessions)).intValue();
+			int sessions = Integer.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.sessions));
 			Logger.log("Starting concurrent sessions: " + sessions);
 			
 			ExecutorThread[] threads = new ExecutorThread[sessions];
@@ -204,10 +203,9 @@ public class Executor
 			Runtime.getRuntime().addShutdownHook(new ShutDown(threads));
 			
 			// Wait for all threads to finish
-			for (int iThread=0;iThread<threads.length;iThread++)
-			{
+			for (ExecutorThread thread : threads) {
 				try {
-					threads[iThread].join();
+					thread.join();
 				} catch (InterruptedException e) {
 					// Ignore thread interrupt!
 				}

@@ -42,11 +42,11 @@ public class Parameters
 	public static final String verbose = "verbose";
 	public static final String ignoreErrors = "ignoreErrors";
 	
-	private Properties parameters;
+	private final Properties parameters;
 	
-	private static Parameters _instance = new Parameters();
+	private static final Parameters _instance = new Parameters();
 	
-	public Parameters() {		
+	protected Parameters() {
 		// Initialize application parameter properties
 		parameters = new Properties();
 

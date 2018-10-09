@@ -95,6 +95,6 @@ public class CommandsReaderTest extends TestCase
 	@Test
 	public void test_negative_SqlReader()
 	{
-		try { new CommandsReader(); } catch (Exception e) {};
+		try { new CommandsReader(); } catch (Exception e) {}
 	}
 }

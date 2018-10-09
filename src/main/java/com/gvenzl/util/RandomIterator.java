@@ -34,9 +34,9 @@ import java.util.Random;
  */
 public class RandomIterator<E> implements Iterator<E>
 {
-	private ArrayList<Integer> index; 
-	private List<E> list;
-	private Random random;
+	private final ArrayList<Integer> index;
+	private final List<E> list;
+	private final Random random;
 	
 	/**
 	 *  Generates a new RandomIterator over passed on list.
@@ -45,12 +45,12 @@ public class RandomIterator<E> implements Iterator<E>
 	{
 		list = l;
 		random = new Random();
-		index = new ArrayList<Integer>();
+		index = new ArrayList<>();
 		
 		// Build HashSet with values
 		for (int i=0;i<list.size();i++)
 		{
-			index.add(Integer.valueOf(i));
+			index.add(i);
 		}
 	}
 
@@ -58,7 +58,7 @@ public class RandomIterator<E> implements Iterator<E>
 	public boolean hasNext()
 	{
 		// as long as there are still values in the indexSet there are still values to iterate over
-		return (index.size() > 0 ? true : false);
+		return (index.size() > 0);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class RandomIterator<E> implements Iterator<E>
 		}
 		
 		Integer idx = random.nextInt(index.size());
-		E obj = list.get(index.get(idx.intValue()));
+		E obj = list.get(index.get(idx));
 		index.remove(idx.intValue());
 		return obj;
 	}

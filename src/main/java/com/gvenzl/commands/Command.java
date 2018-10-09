@@ -36,11 +36,11 @@ public class Command
 	private String commandString;
 	private Key key;
 	private Value value;
-	private TYPE type;
+	private final TYPE type;
 	
-	public enum TYPE { SQL, KV };
-	
-	public Command (String command)	{
+	public enum TYPE { SQL, KV }
+
+    public Command (String command)	{
 		commandString = command;
 		type = TYPE.SQL;
 	}

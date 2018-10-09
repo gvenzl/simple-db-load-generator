@@ -28,8 +28,6 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,14 +50,14 @@ public class CommandsReader
 	/***************************** MYSQL specific variables *************************/
 	private static final String MYSQLPATTERN = "((\\d{6} \\d{2}:\\d{2}:\\d{2}\\t)|(\\t{2}))\\s*\\d* (\\w+)\\t?(.+$)";
 	private static final String MYSQLSQLCOMMENTPATTERN = "(/\\* .* \\*/)(.*)";
-	public static final String[] MYSQLSUPPORTEDCOMMANDTYPES = { "QUERY", "DELAYED INSERT", "PREPARE", "EXECUTE", "CLOSE STMT", "RESET STMT", "FETCH" };
-	public static final String[] MYSQLSUPPORTEDCOMMANDS =
+	private static final String[] MYSQLSUPPORTEDCOMMANDTYPES = { "QUERY", "DELAYED INSERT", "PREPARE", "EXECUTE", "CLOSE STMT", "RESET STMT", "FETCH" };
+	private static final String[] MYSQLSUPPORTEDCOMMANDS =
 									{ "SELECT ", "UPDATE ", "INSERT ", "DELETE ", "COMMIT", "ROLLBACK", "LOAD DATA INFILE ", "LOAD XML ", "START TRANSACTION",
 										"REPLACE ", "CALL", "SAVEPOINT", "ROLLBACK WORK TO", "ROLLBACK TO", "RELEASE SAVEPOINT", "LOCK TABLES", "UNLOCK TABLES",
 										"PREPARE", "DEALLOCATE PREPARE", "DROP PREPARE", "EXECUTE"
 									};
-	boolean bMySqlFile = false;
-	boolean bMySqlSupportedCommand = false;
+	private boolean bMySqlFile = false;
+	private boolean bMySqlSupportedCommand = false;
 
 	/**************************** ORACLE specific variables *******************************/
 	//TODO: Oracle trace file parsing
@@ -70,7 +68,7 @@ public class CommandsReader
 	private static final String KVPATTERN = "((/\\w+)*((/-)|(/))(/\\w+)*)\\|\\|(.+$)";
 	
 	/**************************** TextFile specific variables *****************************/
-	private static String TEXTFILEPATTERN= "(.+)(;$)";
+	private static final String TEXTFILEPATTERN= "(.+)(;$)";
 	
 	/**
 	 * Creates a new CommandsReader instance
@@ -90,7 +88,7 @@ public class CommandsReader
 		{
 			throw new RuntimeException("File " + commandsFilePath.toAbsolutePath().toString() + " is not readable!");
 		}
-		this.commandsList = new ArrayList<Command>();
+		this.commandsList = new ArrayList<>();
 	}
 	
 	/**
@@ -139,32 +137,27 @@ public class CommandsReader
 			// Loop over array - use for loop rather than for-each for error line tracking!
 			String multiLineTextFileCommand = "";
 			String[] lines = fileContent.trim().split(separator);
-			for (int iLineNumber=0; iLineNumber<lines.length; iLineNumber++)
-			{
-				
+			for (String line : lines) {
+
 				// Create matchers for all input RegEx for current line
-				Matcher mySqlMatcher = mySqlPattern.matcher(lines[iLineNumber]);
-				
+				Matcher mySqlMatcher = mySqlPattern.matcher(line);
+
 				//TODO: Oracle Trace file parsing
 				// Matcher oracleMatcher = oraclePattern.matcher(lines[iLineNumber]);
-				
-				Matcher textFileMatcher = textFilePattern.matcher(lines[iLineNumber]);
-				
-				Matcher kVFileMatcher = kVPattern.matcher(lines[iLineNumber]);
-			
+
+				Matcher textFileMatcher = textFilePattern.matcher(line);
+
+				Matcher kVFileMatcher = kVPattern.matcher(line);
+
 				// MySqlline matches
-				if (mySqlMatcher.matches())
-				{
+				if (mySqlMatcher.matches()) {
 					bMySqlFile = true;
 					String commandType = mySqlMatcher.replaceAll("$4");
 					String command = mySqlMatcher.replaceAll("$5");
-					if (isSupportedMySqlCommand(commandType, command))
-					{
+					if (isSupportedMySqlCommand(commandType, command)) {
 						bMySqlSupportedCommand = true;
 						commandsList.add(new Command(command.replaceAll("`", "")));
-					}
-					else
-					{
+					} else {
 						bMySqlSupportedCommand = false;
 					}
 
@@ -175,43 +168,36 @@ public class CommandsReader
 				{
 					bOracleFile = true;
 				}*/
-				else if (kVFileMatcher.matches())
-				{
+				else if (kVFileMatcher.matches()) {
 					// Extract key
 					Key key = Key.fromString(kVFileMatcher.replaceAll("$1"));
 
 					// Extract value
 					Value value = Value.createValue(kVFileMatcher.replaceAll("$7").getBytes());
-					
+
 					commandsList.add(new Command(key, value));
-				}
-				else if (textFileMatcher.matches())
-				{
+				} else if (textFileMatcher.matches()) {
 					// Add potential multi lines to SQL command (default empty string)
 					multiLineTextFileCommand = multiLineTextFileCommand + textFileMatcher.replaceAll("$1");
 					// Add complete sql command to list
 					commandsList.add(new Command(multiLineTextFileCommand));
 					// Reset multi line variable
 					multiLineTextFileCommand = "";
-				}
-				else
-				{
+				} else {
 					// Ticket 7: Multi-Line support
-					if (bMySqlFile && bMySqlSupportedCommand)
-					{
+					if (bMySqlFile && bMySqlSupportedCommand) {
 						// Get index of latest added command
-						int index = (commandsList.size()-1);
+						int index = (commandsList.size() - 1);
 						// Get last SQL command
 						String sql = commandsList.get(index).getCommand();
 						// Append current line
-						sql = sql + " " + lines[iLineNumber];
+						sql = sql + " " + line;
 						// Override last added command
 						commandsList.set(index, new Command(sql));
 					}
 					// Text file could be Multi-line, save current line until command end
-					else
-					{
-						multiLineTextFileCommand = multiLineTextFileCommand +lines[iLineNumber] + " ";
+					else {
+						multiLineTextFileCommand = multiLineTextFileCommand + line + " ";
 					}
 				}
 			}
@@ -240,17 +226,13 @@ public class CommandsReader
 		if (Arrays.asList(MYSQLSUPPORTEDCOMMANDTYPES).contains(commandType.toUpperCase()))
 		{
 			// If actual SQL command is supported
-			List<String> supportedCommands = Arrays.asList(MYSQLSUPPORTEDCOMMANDS);
-			Iterator<String> supportedCommandsIterator = supportedCommands.iterator();
 			// Iterate over all supported commands
 			// TODO: Check for better way to do this
-			while (supportedCommandsIterator.hasNext())
-			{
+			for (String supportedCommand : MYSQLSUPPORTEDCOMMANDS) {
 				// RegEx trim any comment in SQL (/* ...... */ but not /*+ ..... */ as those are Oracle Optimizer hints)
 				// Convert command to upper case for supported commands pattern match
 				// Check whether the SQL command starts with one of the supported commands
-				if (command.replaceFirst(MYSQLSQLCOMMENTPATTERN, "$2").toUpperCase().startsWith(supportedCommandsIterator.next()))
-				{
+				if (command.replaceFirst(MYSQLSQLCOMMENTPATTERN, "$2").toUpperCase().startsWith(supportedCommand)) {
 					return true;
 				}
 			}

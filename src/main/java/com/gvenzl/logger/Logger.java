@@ -33,7 +33,7 @@ public class Logger
 	
 	/**
 	 * En- or disables verbose output
-	 * @param debug True=enable debug; False=disable debug
+	 * @param verbose Enable or disable verbose output
 	 */
 	public static void setVerbose(boolean verbose)
 	{
