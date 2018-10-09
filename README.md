@@ -12,48 +12,51 @@
 
 ## 1. Purpose
 
-Purpose of this application is to enable the user to generate/simulate some user load.
-It uses a user defined set of SQL statements which can executed in a single or multiple database sessions
+Purpose of this application is to enable users to generate or simulate some work load on a database.
+SimpleLoadGenerator uses a predefined set of SQL statements which can be executed in a single or in multiple database sessions, the latter for scaling the workload.
 
 ## 2. Concept
 
 SimpleLoadGenerator was born out of the need to re-execute some production system SQL statements against a test database with the possibility to scale up the execution workload.
-The SQL statements were provided via a database trace file which then got trimmed down to the actual SQL statements.
-The idea spawn further to provide a generic load tool where someone could quickly generate either some random load against a database or execute quickly a couple of statements concurrently.
+The SQL statements to re-execute were provided via a database trace file which got trimmed down to the actual SQL statements.
+The idea spawn further to provide a generic load tool where someone could quickly generate either some random load against a database or execute a couple of statements concurrently.
 
 The original design was based on reading a plain text file which contains SQL statements.
-SimpleLoadGenerator recognizes every byte in the file as part of a SQL statement until a ";" followed by a line end, is encountered which delimits the current SQL statement from the next one.
-This means that when you run a plain text file, you can make your SQL statements as long and as many lines as you want, but you have to put a ";" at the end of a line to tell SimpleLoadGenerator
-that the SQL command is finished. Previously SimpleLoadGenerator had the limitation that no ";" could appear within a SQL command, this limitation is now gone!
+SimpleLoadGenerator recognizes every byte in the file as part of a SQL statement until a ";" followed by a line end/carriage return (`EOL`) is encountered which delimits the current SQL statement from the next one.
+Because of that SQL statements can be many lines long, as long as the end is clearly marked by ";" + `EOL`.
 
-With version 1.1.0 came the improvement to read MySQL general log and Oracle trace files. This improvement was intended to make it
+With version 1.1.0 came the improvement to read MySQL general log files. This improvement was intended to make it
 easier for the user to re-execute a SQL load without having to extract the SQLs into a plain file first.
 However, by re-executing trace files there is a danger of re-executing some internal or recursive SQL commands that should not or must not be executed.
-Because of that danger not all SQLs will be plainly re-executed as it is the case with plain text files! For the various restrictions see the sections below!
+Because of that not all SQLs are executed from a trace file. For the various restrictions on trace file execution see the sections below!
 
-The application parses the entire SQL file and keeps all the SQL statements in memory which then get executed by one or more database sessions (configurable).
-The SQL statements are executed in RANDOM order and the execution of the next statement is paused for a random generated number between 0 and 1000 milliseconds.
-This is done to simulate a more realistic SQL load. Also, SimpleLoadGenerator detects SELECT statements and automatically fetches all rows of the SELECT being executed.
-This too is done to simulate a more realistic SQL load.
-Once all the statements are executed the application starts over again, ultimately producing an infinite loop.
-Only a kill signal ([Ctrl]+[C]) or an error (in case the -ignoreErrors flag is not set - see below) will cause the application to stop gracefully
-by stopping the execution after the current statement has been finished and closing the connection.
+The application parses the entire SQL file and keeps all the SQL statements in memory for the duration of the program runtime.
+The SQL statements are then executed by one or more database sessions (configurable).
+Furthermore, the SQL statements are executed in **RANDOM** order. The pause between the execution of two statements is a random generated number between 0 and 1000 milliseconds.
+This is done to simulate a more realistic SQL load. Also, SimpleLoadGenerator detects `SELECT` statements and automatically fetches all rows of the `SELECT` being executed.
+This too is done to simulate a more realistic SQL load, making sure that all data of a `SELECT` has been fetched over the network.
+Once all the statements are executed, the application starts over again ultimately producing an infinite loop.
+Only a kill signal ([Ctrl]+[C]) or an error (in case the `-ignoreErrors` flag is not set - see below) will cause the application to stop gracefully.
 
 ### 2.1 Plain text file re-execution
 
-SimpleLoadGenerator will execute whatever is in the text file. This makes SimpleLoadGenerator very flexible and does not constrain the SQLs to SELECT statements only.
-In case that the text file contains INSERT/UPDATE/DELETE statements that will start transactions, SimpleLoadGenerator WILL NOT execute a commit automatically.
-If a commit needs to be executed, it will have to be in the text file as "COMMIT;" at the appropriate place!
-The application will also not execute a rollback at the end of each test cycle which could cause the UNDO tablespace on an Oracle database to grow significantly.
-It is believed that if DML loads are simulated, the user also wants to commit them, e.g. batch load simulation
+SimpleLoadGenerator will execute whatever is in the text file. This makes SimpleLoadGenerator very flexible and does not constrain the SQLs to `SELECT` statements only.
+In case that the text file contains `INSERT`/`UPDATE`/`DELETE` statements that will start transactions, SimpleLoadGenerator WILL NOT execute a commit automatically.
+If a commit needs to be executed, it will have to be in the text file as "COMMIT;"!
+The application will not execute a rollback at the end of each test cycle.
+It is believed that if DML loads are simulated, the user also wants to commit them, e.g. batch load simulation.
+Otherwise, the user will have to explicitly add "ROLLBACK;", if desired.
 
 ### 2.2 MySQL general log file re-execution
 
-The MySQL general log file is a plain text of binary file containing SQL command executions. SimpleLoadGenerator supports the plain text mode only!
-The general log file has two different formats of lines. Whenever the time between the last and current execution changes for a second or more,
-the date and time will be printed first, then followed by the thread id, command type and SQL command text.
+The MySQL general log file comes in plain text or binary format, containing SQL command executions.
+SimpleLoadGenerator supports the plain text format only!
+The general log file has two different line formats.
+Whenever the time between the last and current execution changes for a second or more,
+the date and time will be printed first, followed by the thread id, command type and SQL command text.
+In case the time hasn't changed, i.e. the SQL has been executed the very same second as the previous one, the date and time will be omitted.
 
-The format looks like this ([\t] representing a tabulator character):  
+The format looks like this (`[\t]` representing a tabulator character):  
 `[Date][Space][Time][\t][ThreadId][Space][CommandType][\t][Sql Text][\n]`  
 `[\t][\t][ThreadId][Space][CommandType][\t][Sql Text][\n]`
 
@@ -247,25 +250,26 @@ The program comes with a default run script (run.sh for Unix, run.bat for Window
 
     ./run.sh
 
-SimpleLoadGenerator provides two ways how to specify parameters. This can be done by either a properties file (SimpleLoadGenerator.properties) or via command line.
-The command line can get quite long with the database connection details and usually you only specify them once and then you just adjust the SQL statements in the file or the amount of database sessions.
-Therefore it's a good practice to use the properties file rather than the command line parameters.
+SimpleLoadGenerator provides two ways on how to specify the input parameters.
+This can be done by either a properties file (SimpleLoadGenerator.properties) or via command line.
+The command line can get quite long with the database connection details and usually remains static while users adjust SQL statements in the file or the amount of database sessions more often.
+It is therefore a good practice to use the properties file rather than the command line parameters.
 
-SimpleLoadGenerator will ignore any command line parameters if a properties file is found in the working directory!
+**Note:** SimpleLoadGenerator will ignore any command line parameters if a properties file is found in the working directory!
 
 Following parameter need to be set:
 
-    -user [username]:                         The username of the database user  
-    -password [password]:                     The password of the user  
-    -host [hostname]:                         Database machine host name or IP address  
-    -port [port]:                             Listener port of the database listener  
-    -sid [sid]:                               Database SID/name  
-    -databaseType [oracle|mysql]:             Specify whether the load is against an Oracle or MySql database  
-    -sqlfile [path to SQL statements file]:   The absolute or relative path to the SQL statements file to load  
-    -sessions [amount of sessions]:           The amount of sessions that should execute the SQLs against the database (default: 1)  
-    -ignoreErrors:                            Specifies whether the application should ignore failing SQL statements and continue with the load  
-    -debug:                                   Enables debugging output, mostly useful to see which SQL statements got executed when  
-    -help:                                    Shows the online help only  
+    -user           [username]             The username of the database user  
+    -password       [password]             The password of the user  
+    -host           [hostname]             Database machine host name or IP address  
+    -port           [port]                 Listener port of the database listener  
+    -sid            [sid]                  Database SID/name  
+    -databaseType   [oracle|mysql]         Specify whether the load is against an Oracle or MySql database  
+    -sqlfile        [path to SQLs file]    The absolute or relative path to the SQL statements file to load  
+    -sessions       [amount of sessions]   The amount of sessions that should execute the SQLs against the database (default: 1)  
+    -ignoreErrors                          Specifies whether the application should ignore failing SQL statements and continue with the load  
+    -debug                                 Enables debugging output, mostly useful to see which SQL statements got executed when  
+    -help                                  Shows the online help only  
 
 Example:
 
