@@ -19,7 +19,7 @@ public class CommandsReaderTest extends TestCase
 	@Test
 	public void test_SqlReader() throws Exception
 	{
-		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "allSqls.sql");
+		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/allSqls.sql");
 		new CommandsReader();
 	}
 	
@@ -27,7 +27,7 @@ public class CommandsReaderTest extends TestCase
 	public void test_parseTextSqlFile()
 		throws Exception
 	{
-		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "allSqls.sql");
+		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/allSqls.sql");
 		// Amount of SQLs in test file
 		final int expectedParsedSQLs = 50;
 		ArrayList<Command> sqls = new CommandsReader().parseCommandsFile();
@@ -45,7 +45,7 @@ public class CommandsReaderTest extends TestCase
 	public void test_parseMySqlGeneralLogFile()
 		throws Exception
 	{
-		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "mysql.general.log");
+		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/mysql.general.log");
 		// Amount of valid/supported SQLs in test file
 		final int expectedValidSQLs = 91;
 		ArrayList<Command> sqls = new CommandsReader().parseCommandsFile();
@@ -61,7 +61,7 @@ public class CommandsReaderTest extends TestCase
 	
 	@Test
 	public void test_parseKVFile() throws Exception {
-		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "kvdata.log");
+		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/kvdata.log");
 		// Amount of KVs in test file
 		final int expectedKVs = 11;
 		ArrayList<Command> kvs = new CommandsReader().parseCommandsFile();
