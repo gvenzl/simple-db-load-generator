@@ -6,7 +6,6 @@
 2.  Concept  
 2.1 Plain text file re-execution  
 2.2 MySQL general log file re-execution  
-2.3 Oracle trace file re-execution  
 3.  Build  
 4.  Running SimpleLoadGenerator  
 
@@ -201,9 +200,6 @@ Other Non-supported commands:
     EXPLAIN
     HELP
     USE
-
-### 2.3 Oracle trace file re-execution
-//TODO: Add Oracle trace file support
 
 ## 3. Build
 
