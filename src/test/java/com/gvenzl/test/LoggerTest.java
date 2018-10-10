@@ -21,18 +21,12 @@
 
 package com.gvenzl.test;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
 import com.gvenzl.logger.Logger;
 
-/**
- * @author gvenzl
- *
- */
-public class LoggerTest extends TestCase
-{
+public class LoggerTest {
+
 	@Test
 	public void test_logEmpty() {
 		System.out.println("Test logger new line");

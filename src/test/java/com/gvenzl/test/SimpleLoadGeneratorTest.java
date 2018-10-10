@@ -21,18 +21,12 @@
 
 package com.gvenzl.test;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 
 import com.gvenzl.SimpleLoadGenerator;
 
-/**
- * @author gvenzl
- *
- */
-public class SimpleLoadGeneratorTest extends TestCase
-{
+public class SimpleLoadGeneratorTest {
+
 	@Test
 	public void test_printHelp() {
 		System.out.println("Test online help");

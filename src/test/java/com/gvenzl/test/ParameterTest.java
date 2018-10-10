@@ -21,18 +21,14 @@
 
 package com.gvenzl.test;
 
-import junit.framework.TestCase;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.gvenzl.Parameters;
 
-/**
- * @author gvenzl
- *
- */
-public class ParameterTest extends TestCase
-{
+public class ParameterTest {
+
 	private class MyParams extends Parameters
 	{
 		
@@ -48,14 +44,14 @@ public class ParameterTest extends TestCase
 	@Test
 	public void test_values()
 	{
-		assertEquals("dbType", MyParams.dbType);
-		assertEquals("verbose", Parameters.verbose);
-		assertEquals("host", Parameters.host);
-		assertEquals("password", Parameters.password);
-		assertEquals("port", Parameters.port);
-		assertEquals("sessions", Parameters.sessions);
-		assertEquals("dbName", Parameters.dbName);
-		assertEquals("inputFile", Parameters.inputFile);
-		assertEquals("user", Parameters.user);
+		Assert.assertEquals("dbType", MyParams.dbType);
+		Assert.assertEquals("verbose", Parameters.verbose);
+		Assert.assertEquals("host", Parameters.host);
+		Assert.assertEquals("password", Parameters.password);
+		Assert.assertEquals("port", Parameters.port);
+		Assert.assertEquals("sessions", Parameters.sessions);
+		Assert.assertEquals("dbName", Parameters.dbName);
+		Assert.assertEquals("inputFile", Parameters.inputFile);
+		Assert.assertEquals("user", Parameters.user);
 	}
 }

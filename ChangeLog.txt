@@ -1,5 +1,12 @@
 SimpleLoadGenerator - Change Log - (c) Gerald Venzl
 
+v2.0.0
+
+Changes:
+
+* Migration to GitHub
+* Migration to Java 8
+
 v1.1.0
 
 Changes:

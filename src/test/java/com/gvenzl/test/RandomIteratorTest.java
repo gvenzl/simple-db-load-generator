@@ -24,15 +24,14 @@ package com.gvenzl.test;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-import junit.framework.TestCase;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.gvenzl.util.RandomIterator;
 
-public class RandomIteratorTest extends TestCase
-{
+public class RandomIteratorTest {
+
 	private ArrayList<Integer> myTestList;
 	private RandomIterator<Integer> myRandomIterator;
 	
@@ -116,7 +115,7 @@ public class RandomIteratorTest extends TestCase
 		
 		for (int i=0;i<myTestList.size();i++)
 		{
-			assertFalse(myRandomIterator.next().equals(randomIterator2.next()));
+			Assert.assertNotEquals(myRandomIterator.next(), randomIterator2.next());
 		}
 	}
 	
