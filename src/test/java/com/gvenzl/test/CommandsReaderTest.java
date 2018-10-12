@@ -21,25 +21,26 @@
 
 package com.gvenzl.test;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import com.gvenzl.commands.*;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.gvenzl.Parameters;
-import com.gvenzl.commands.Command;
-import com.gvenzl.commands.CommandsReader;
 
 public class CommandsReaderTest {
 
 	@Test
-	public void test_SqlReader() {
+	public void test_SqlReader() throws Exception {
 		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/allSqls.sql");
 		new CommandsReader();
 	}
 	
 	@Test
-	public void test_parseTextSqlFile() {
+	public void test_parseTextSqlFile() throws Exception {
 		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/allSqls.sql");
 		// Amount of SQLs in test file
 		final int expectedParsedSQLs = 50;
@@ -55,7 +56,7 @@ public class CommandsReaderTest {
 	}
 	
 	@Test
-	public void test_parseMySqlGeneralLogFile() {
+	public void test_parseMySqlGeneralLogFile() throws Exception {
 		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/mysql.general.log");
 		// Amount of valid/supported SQLs in test file
 		final int expectedValidSQLs = 91;
@@ -71,7 +72,7 @@ public class CommandsReaderTest {
 	}
 	
 	@Test
-	public void test_parseKVFile() {
+	public void test_parseKVFile() throws Exception {
 		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/kvdata.log");
 		// Amount of KVs in test file
 		final int expectedKVs = 11;
@@ -87,9 +88,38 @@ public class CommandsReaderTest {
 		}
 	}
 	
-	@Test
-	public void test_negative_SqlReader()
-	{
-		try { new CommandsReader(); } catch (Exception e) {}
+	@Test (expected = NoFilePassedException.class)
+	public void test_negative_CommandReader_no_file_provided() throws Exception	{
+
+		new CommandsReader();
 	}
+
+	@Test (expected = FileIsDirectoryException.class)
+    public void test_negative_CommandReader_file_is_directory() throws Exception {
+
+        Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources");
+        new CommandsReader();
+    }
+
+    @Test
+    public void test_negative_CommandReader_file_is_readonly() throws Exception {
+
+	    String fileName = "src/test/resources/readonly.test";
+        File testFile = new File(fileName);
+        testFile.createNewFile();
+        testFile.setReadable(false);
+
+        Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, fileName);
+        try {
+            new CommandsReader();
+        } catch (FileNotReadable e) {
+            testFile.delete();
+        }
+    }
+
+    @After
+    public void tearDown() {
+	    Parameters.getInstance().tearDown();
+    }
+
 }

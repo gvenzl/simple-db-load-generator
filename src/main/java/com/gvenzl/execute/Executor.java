@@ -163,7 +163,7 @@ public class Executor
 	/**
 	 * Starts the test execution
 	 */
-	public void runTests()
+	public void runTests() throws Exception
 	{
 		// Parse all SQLs into a ArrayList 
 		ArrayList<Command> commands = new CommandsReader().parseCommandsFile();

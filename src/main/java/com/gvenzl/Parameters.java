@@ -44,7 +44,7 @@ public class Parameters
 	
 	private final Properties parameters;
 	
-	private static final Parameters _instance = new Parameters();
+	private static Parameters _instance;
 	
 	protected Parameters() {
 		// Initialize application parameter properties
@@ -58,10 +58,19 @@ public class Parameters
 	}
 	
 	public static Parameters getInstance() {
+
+	    if (null == _instance) {
+	        _instance = new Parameters();
+        }
+
 		return _instance;
 	}
 	
 	public Properties getParameters() {
 		return parameters;
 	}
+
+	public void tearDown() {
+	    _instance = null;
+    }
 }

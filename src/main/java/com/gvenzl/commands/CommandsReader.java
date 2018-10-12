@@ -22,10 +22,7 @@
 package com.gvenzl.commands;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -72,21 +69,29 @@ public class CommandsReader
 	
 	/**
 	 * Creates a new CommandsReader instance
+     * @throws FileIsDirectoryException Exception thrown if the path to the file is actually a directory
+     * @throws FileNotReadable Exception thrown if the file is not readable
+     * @throws NoFilePassedException Exception thrown if no file has been provided
 	 */
-	public CommandsReader ()
-	{
-		this.commandsFilePath = FileSystems.getDefault().getPath(Parameters.getInstance().getParameters().getProperty(Parameters.inputFile));
+	public CommandsReader() throws FileIsDirectoryException, FileNotReadable, NoFilePassedException {
+
+	    String path = Parameters.getInstance().getParameters().getProperty(Parameters.inputFile);
+
+	    if (null == path) {
+	        throw new NoFilePassedException("No input file has been provided!");
+        }
+
+		this.commandsFilePath = FileSystems.getDefault().getPath(path);
 		
 		// Multiple files are not supported yet, therefore no directory can be specified!
 		if (Files.isDirectory(commandsFilePath, new LinkOption[] {}))
 		{
-			throw new RuntimeException("The passed file " + commandsFilePath.toAbsolutePath().toString() + " is a directory!" +
-									"Executing multiple files is not supported yet but planned for the future!");
+			throw new FileIsDirectoryException("The passed file " + commandsFilePath.toAbsolutePath().toString() + " is a directory!");
 		}
 		// File not readable
 		else if (!Files.isReadable(commandsFilePath))
 		{
-			throw new RuntimeException("File " + commandsFilePath.toAbsolutePath().toString() + " is not readable!");
+			throw new FileNotReadable("File " + commandsFilePath.toAbsolutePath().toString() + " is not readable!");
 		}
 		this.commandsList = new ArrayList<>();
 	}
