@@ -203,9 +203,35 @@ Other Non-supported commands:
 
 ## 3. Build
 
-An Ant build file is provided in the "build" directory. To build the program you have to
-invoke the default target "build". Also you have to have the Oracle JDBC driver (11.2)
-and MySql Connector/J (5.1) libraries within the classpath.
+SimpleLoadGenerator is a Maven project. The Maven `pom.xml` file has following dependencies declared:
+
+    <dependency>
+        <groupId>com.oracle</groupId>
+        <artifactId>ojdbc8</artifactId>
+        <version>12.2.0.1</version>
+    </dependency>
+    <dependency>
+       <groupId>com.oracle</groupId>
+       <artifactId>kvclient</artifactId>
+        <version>18.1.16</version>
+    </dependency>
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.12</version>
+    </dependency>
+    
+Both, the Oracle JDBC driver 12.2.0.1 and the Oracle NoSQL Client 18.1.16 
+need to be installed into the local Maven repository first. This can be done via:
+
+    mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> \
+        -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=compile
+
+You can build SimpleLoadGenerator by simply running:
+
+    mvn clean package
+    
+This produces a packaged jar under `simpleloadgenerator/target/SimpleLoadGenerator<version>.jar`
 
 ## 4. Execute a load run
 
