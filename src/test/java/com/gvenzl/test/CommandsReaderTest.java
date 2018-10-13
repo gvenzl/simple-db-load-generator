@@ -106,14 +106,20 @@ public class CommandsReaderTest {
 
 	    String fileName = "src/test/resources/readonly.test";
         File testFile = new File(fileName);
-        testFile.createNewFile();
-        testFile.setReadable(false);
+        if (! testFile.createNewFile())
+        	throw new Exception("Test execution error: Test file cannot be created!");
+
+        if (! testFile.setReadable(false)) {
+            throw new Exception("Test execution error: Test file cannot be modified!");
+        }
 
         Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, fileName);
         try {
             new CommandsReader();
         } catch (FileNotReadable e) {
-            testFile.delete();
+            if (! testFile.delete()) {
+                throw new Exception("Test execution error: Test file cannot be cleaned up!");
+            }
         }
     }
 

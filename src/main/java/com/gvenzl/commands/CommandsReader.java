@@ -84,7 +84,7 @@ public class CommandsReader
 		this.commandsFilePath = FileSystems.getDefault().getPath(path);
 		
 		// Multiple files are not supported yet, therefore no directory can be specified!
-		if (Files.isDirectory(commandsFilePath, new LinkOption[] {}))
+		if (Files.isDirectory(commandsFilePath))
 		{
 			throw new FileIsDirectoryException("The passed file " + commandsFilePath.toAbsolutePath().toString() + " is a directory!");
 		}
@@ -154,7 +154,7 @@ public class CommandsReader
 
 				Matcher kVFileMatcher = kVPattern.matcher(line);
 
-				// MySqlline matches
+				// MySql line matches
 				if (mySqlMatcher.matches()) {
 					bMySqlFile = true;
 					String commandType = mySqlMatcher.replaceAll("$4");
