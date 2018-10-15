@@ -235,25 +235,18 @@ This produces a packaged jar under `simpleloadgenerator/target/SimpleLoadGenerat
 
 ## 4. Execute a load run
 
-### 4.1 Prerequisites
-
-SimpleLoadGenerator requires either the Oracle 11g JDBC driver in the "ojdbc6.jar" library or the MySql Connector/J in the "mysql-connector-java-5.1.NN-bin.jar" library
-in the classpath/working directory, depending on which database the load is executed against.
-The Oracle JDBC driver can be found in $ORACLE_HOME/jdbc/lib
-The MySql Connector/J can be downloaded for free at http://www.mysql.com/downloads/connector/j/  
-
-### 4.2. Set correct Java version
+### 4.1. Set correct Java version
 
 SimpleLoadGenerator runs with Java 1.7+ and is successfully tested with Update 13.
 
-    export JAVA_HOME=/usr/jdk1.7.0_06
+    export JAVA_HOME=/usr/jdk1.7.0_13
     export PATH=$JAVA_HOME/bin:$PATH
     java -version
       java version "1.7.0_13"
       Java(TM) SE Runtime Environment (build 1.7.0_13-b20)
       Java HotSpot(TM) 64-Bit Server VM (build 23.7-b01, mixed mode)
 
-### 4.3 JVM parameters
+### 4.2. JVM parameters
 
 No special JVM parameters are needed. However, depending on how big the SQL file is, the default max heap size could be insufficient.
 This can be controlled by the -Xmx JVM parameter:
@@ -266,7 +259,7 @@ Example:
 
     java -Xmx512m -jar SimpleLoadGenerator.jar
 
-### 4.4. Running SimpleLoadGenerator
+### 4.3. Running SimpleLoadGenerator
 
 The program comes with a default run script (run.sh for Unix, run.bat for Windows)
 
