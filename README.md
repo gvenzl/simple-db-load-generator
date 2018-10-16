@@ -237,14 +237,14 @@ This produces a packaged jar under `simpleloadgenerator/target/SimpleLoadGenerat
 
 ### 4.1. Set correct Java version
 
-SimpleLoadGenerator runs with Java 1.7+ and is successfully tested with Update 13.
+SimpleLoadGenerator runs with Java 7+ and is successfully tested with Java 8 Update 181.
 
-    export JAVA_HOME=/usr/jdk1.7.0_13
+    export JAVA_HOME=/usr/jdk1.8.0_181
     export PATH=$JAVA_HOME/bin:$PATH
     java -version
-      java version "1.7.0_13"
-      Java(TM) SE Runtime Environment (build 1.7.0_13-b20)
-      Java HotSpot(TM) 64-Bit Server VM (build 23.7-b01, mixed mode)
+      java version "1.8.0_181"
+      Java(TM) SE Runtime Environment (build 1.8.0_181-b13)
+      Java HotSpot(TM) 64-Bit Server VM (build 25.181-b13, mixed mode)
 
 ### 4.2. JVM parameters
 
@@ -288,7 +288,7 @@ Following parameter need to be set:
 
 Example:
 
-     java -jar SimpleLoadGenerator.jar -user scott -password tiger \
+     java -jar SimpleLoadGenerator-*.jar -user scott -password tiger \
      -host localhost -port 1521 -sid MYDB -databaseType oracle \
      -ignoreErrors -sqlfile ./SQLs.txt -sessions 10 -ignoreErrors
 
