@@ -1,1 +1,1 @@
-java -jar SimpleLoadGenerator.jar %*
+java -jar SimpleLoadGenerator-*.jar %*
