@@ -80,8 +80,8 @@ public class Executor
 		@Override
 		public void run() {
 			// Set stop flag for each thread
-			for (ExecutorThread aThreadsToStop1 : threadsToStop) {
-				aThreadsToStop1.stopThread();
+			for (ExecutorThread aThreadsToStop : threadsToStop) {
+				aThreadsToStop.stopThread();
 			}
 			
 			// Wait until each thread has finished

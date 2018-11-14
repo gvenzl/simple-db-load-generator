@@ -225,6 +225,7 @@ class ExecutorThread extends Thread
 					// Ignore exception while closing, program is about to stop
 					Logger.logVerbose(this.getFullName() + ": Error closing Db connection: " + e.getMessage());
 				}
+				break;
 			}
 			case NOSQL: {
 				kvStoreConn.close();
