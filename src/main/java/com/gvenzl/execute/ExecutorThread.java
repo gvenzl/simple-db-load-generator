@@ -153,13 +153,14 @@ class ExecutorThread extends Thread
 									rows++;
 								}
 								endTime = System.currentTimeMillis();
-							}
+                                Logger.log(this.getFullName() + ": " + rows + " rows in set - (" + (endTime - startTime) + "ms)");
+                            }
 							else {
 								startTime = System.currentTimeMillis();
 								stmt.execute();
 								endTime = System.currentTimeMillis();
+								Logger.log(this.getFullName() + ": DML executed - (" + (endTime - startTime) + "ms)");
 							}
-							Logger.log(this.getFullName() + ": " + rows + " rows in set - (" + (endTime - startTime) + "ms)");					
 						}
 						catch (SQLException e)
 						{
