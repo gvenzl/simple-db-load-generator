@@ -1,5 +1,15 @@
 SimpleLoadGenerator - Change Log - (c) Gerald Venzl
 
+v2.0.2
+
+Changes:
+
+* Differentiate between SQL and DML operations when printing execution log.
+
+Bugfixes:
+
+* Don't throw NullPointerException on [Ctrl]+[C]
+
 v2.0.0
 
 Changes:
