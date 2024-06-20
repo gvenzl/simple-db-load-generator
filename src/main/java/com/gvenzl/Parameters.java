@@ -65,7 +65,11 @@ public class Parameters
 
 		return _instance;
 	}
-	
+
+	/**
+	 * Get the parameter names and values
+	 * @return {@link Properties} containing the parameter names and values
+	 */
 	public Properties getParameters() {
 		return parameters;
 	}

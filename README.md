@@ -1,4 +1,4 @@
-# SimpleLoadGenerator
+# Simple DB Load Generator
 
 ## Content
 
@@ -203,29 +203,20 @@ Other Non-supported commands:
 
 ## 3. Build
 
-SimpleLoadGenerator is a Maven project. The Maven `pom.xml` file has following dependencies declared:
+SimpleLoadGenerator is a Maven project. The Maven `pom.xml` file has the following dependencies declared:
 
-    <dependency>
-        <groupId>com.oracle</groupId>
-        <artifactId>ojdbc8</artifactId>
-        <version>12.2.0.1</version>
-    </dependency>
-    <dependency>
-       <groupId>com.oracle</groupId>
-       <artifactId>kvclient</artifactId>
-        <version>18.1.16</version>
-    </dependency>
-    <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>8.0.12</version>
-    </dependency>
-    
-Both, the Oracle JDBC driver 12.2.0.1 and the Oracle NoSQL Client 18.1.16 
-need to be installed into the local Maven repository first. This can be done via:
-
-    mvn install:install-file -Dfile=<path-to-file> -DgroupId=<group-id> \
-        -DartifactId=<artifact-id> -Dversion=<version> -Dpackaging=compile
+```xml
+<dependency>
+    <groupId>com.oracle.database.jdbc</groupId>
+    <artifactId>ojdbc11</artifactId>
+    <version>23.4.0.24.05</version>
+</dependency>
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <version>8.0.33</version>
+</dependency>
+```
 
 You can build SimpleLoadGenerator by simply running:
 

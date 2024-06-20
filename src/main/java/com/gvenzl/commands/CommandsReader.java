@@ -28,9 +28,6 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import oracle.kv.Key;
-import oracle.kv.Value;
-
 import com.gvenzl.Parameters;
 import com.gvenzl.logger.Logger;
 
@@ -173,7 +170,7 @@ public class CommandsReader
 				{
 					bOracleFile = true;
 				}*/
-				else if (kVFileMatcher.matches()) {
+				/*else if (kVFileMatcher.matches()) {
 					// Extract key
 					Key key = Key.fromString(kVFileMatcher.replaceAll("$1"));
 
@@ -181,7 +178,8 @@ public class CommandsReader
 					Value value = Value.createValue(kVFileMatcher.replaceAll("$7").getBytes());
 
 					commandsList.add(new Command(key, value));
-				} else if (textFileMatcher.matches()) {
+				}*/
+				else if (textFileMatcher.matches()) {
 					// Add potential multi lines to SQL command (default empty string)
 					multiLineTextFileCommand = multiLineTextFileCommand + textFileMatcher.replaceAll("$1");
 					// Add complete sql command to list

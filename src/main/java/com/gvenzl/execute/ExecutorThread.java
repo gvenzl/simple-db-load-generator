@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-import oracle.kv.KVStore;
-
 import com.gvenzl.Parameters;
 import com.gvenzl.commands.Command;
 import com.gvenzl.connection.DbType;
@@ -47,7 +45,6 @@ class ExecutorThread extends Thread
 {
 	private static boolean ignoreErrors = false;
 	private Connection conn;
-	private KVStore kvStoreConn;
 	private final List<Command> commands;
 	
 	private boolean stop = false;
@@ -70,18 +67,6 @@ class ExecutorThread extends Thread
 			Logger.log("Could not set AutoCommit to false: " + e.getMessage());
 			Logger.log("Test will continue with default AutoCommit value!");
 		}
-	}
-	
-	/**
-	 * Creates a new ExecutorThread object
-	 * @param kvStore A connection to the KV store
-	 * @param commands A List of all commands that should be executed
-	 */
-	public ExecutorThread(KVStore kvStore, List<Command> commands)
-	{
-		this.kvStoreConn = kvStore;
-		this.commands = commands;
-		ignoreErrors = Boolean.valueOf(Parameters.getInstance().getParameters().getProperty(Parameters.ignoreErrors));
 	}
 	
 	/**
@@ -175,27 +160,6 @@ class ExecutorThread extends Thread
 						}
 						break;
 					}
-					case NOSQL:
-					{
-						try {
-    						startTime = System.currentTimeMillis();
-    						kvStoreConn.get(cmd.getKey());
-    						kvStoreConn.put(cmd.getKey(), cmd.getValue());
-    						endTime = System.currentTimeMillis();
-						
-    						Logger.log(this.getFullName() + ": Key '" + cmd.getKey().toString() + "' read and written (" + (endTime - startTime) + "ms)");
-						} catch (Exception e) {
-							Logger.log(this.getFullName() + ": Error detected!");
-							Logger.log(this.getFullName() + ": " + e.getMessage());
-								
-							// Only if errors should not be ignored stop thread
-							if (!ignoreErrors) {
-								Logger.log(this.getFullName() + ": Stopping thread due to error!");
-								stop = true;
-							}
-						}
-						break;
-					}
 				}
 				
 				try {
@@ -213,13 +177,12 @@ class ExecutorThread extends Thread
 
 		Logger.log(this.getFullName() + ": Closing Db connection...");
 
-		switch (dbType)
-		{
+		switch (dbType) {
 			case MYSQL:
 			case ORACLE: {
 				try {
 					// Close database connection
-					conn.rollback(); 
+					conn.rollback();
 					conn.close();
 				}
 				catch (SQLException e) {
@@ -228,11 +191,6 @@ class ExecutorThread extends Thread
 				}
 				break;
 			}
-			case NOSQL: {
-				kvStoreConn.close();
-				break;
-			}
-			
 		}
 
 		Logger.log(this.getFullName() + ": Stopping...");

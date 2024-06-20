@@ -24,6 +24,7 @@ package com.gvenzl;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Parameter;
 import java.util.Properties;
 
 import com.gvenzl.execute.Executor;
@@ -48,9 +49,9 @@ public class SimpleLoadGenerator
         Logger.log("[-host]			Database machine host name");
         Logger.log("[-port]			Listener port of the database listener");
         Logger.log("[-dbName]		Database name/service name");
-        Logger.log("[-dbType]		Database type: oracle|mysql|nosql");
+        Logger.log("[-dbType]		Database type: oracle|mysql");
         Logger.log("[-sessions]		Amount of sessions that should execute the queries");
-        Logger.log("[-inputFile]		Path to file containing the commands (e.g. SQL statements or Key Values) to execute");
+        Logger.log("[-inputFile]		Path to file containing the commands (e.g. SQL statements) to execute");
         Logger.log("[-ignoreErrors]		Ignore errors caused by SQL statements and carry on executing");
         Logger.log("[-verbose]		Enables verbose output");
         Logger.log("[-help|--help|-h|-?]	Display this help");
@@ -59,6 +60,47 @@ public class SimpleLoadGenerator
         Logger.log("You will not need to specify any additional parameter. However, the properties file will only be read when you do not pass any parameters on!");
         Logger.log("Each SQL statement in the plain text sql file has to be delimited by \";\\n\".");
         Logger.log("The application does not do a implicit commit if you run against a relational database! If you want to execute DML statements you will have to include a COMMIT statement!");
+	}
+
+	/**
+	 * Parses the command line arguments
+	 * @param args a {@link String} array of command line parameters
+	 */
+	private static void parseArgs(String[] args) {
+
+		Properties params = Parameters.getInstance().getParameters();
+
+		for (int i=0;i<args.length;i++) {
+			if (args[i].equalsIgnoreCase("-" + Parameters.user)) {
+				params.setProperty(Parameters.user, args[++i]);
+			} else if (args[i].equalsIgnoreCase("-" + Parameters.password)) {
+				params.setProperty(Parameters.password, args[++i]);
+			} else if (args[i].equalsIgnoreCase("-" + Parameters.host)) {
+				params.setProperty(Parameters.host, args[++i]);
+			} else if (args[i].equalsIgnoreCase("-" + Parameters.port)) {
+				params.setProperty(Parameters.port, args[++i]);
+			} else if (args[i].equalsIgnoreCase("-" + Parameters.dbName)) {
+				params.setProperty(Parameters.dbName, args[++i]);
+			} else if (args[i].equalsIgnoreCase("-" + Parameters.dbType)) {
+				params.setProperty(Parameters.dbType, args[++i]);
+			} else if (args[i].equalsIgnoreCase("-" + Parameters.sessions)) {
+				params.setProperty(Parameters.sessions, args[++i]);
+			} else if (args[i].equalsIgnoreCase("-" + Parameters.inputFile)) {
+				params.setProperty(Parameters.inputFile, args[++i]);
+			} else if (args[i].equalsIgnoreCase("-" + Parameters.verbose)) {
+				params.setProperty(Parameters.verbose, "true");
+			} else if (args[i].equalsIgnoreCase("-" + Parameters.ignoreErrors)) {
+				params.setProperty(Parameters.ignoreErrors, "true");
+			} else if (args[i].equalsIgnoreCase("-help") || args[i].equals("--help") || args[i].equals("-h") || args[i].equals("-?")) {
+				printHelp();
+				System.exit(0);
+			} else {
+				Logger.log("Unknown parameter: " + args[i]);
+				Logger.log();
+				printHelp();
+				System.exit(0);
+			}
+		}
 	}
 
 	/**
@@ -78,7 +120,7 @@ public class SimpleLoadGenerator
 				// Properties file cannot be found!
 				if (ioEx instanceof FileNotFoundException) {
 					Logger.log("Properties file \"" + propertiesFileName + "\" was not found in current working directory (" + System.getProperties().getProperty("user.dir") + ")");
-					Logger.log("Please use command line parameters or define a poperties file");
+					Logger.log("Please use command line parameters or define a properties file");
 					Logger.log();
 
 					printHelp();
@@ -96,68 +138,11 @@ public class SimpleLoadGenerator
 				System.exit(0);
 			}
 		}
-		
+
 		// Parameters were passed on, properties file ignored -> read passed on parameters
-		Properties props = Parameters.getInstance().getParameters();
-		
-		for (int i=0;i<args.length;i++)
-		{
-			if (args[i].equalsIgnoreCase("-" + Parameters.user))
-			{
-				props.setProperty(Parameters.user, args[++i]);
-			}
-			else if (args[i].equalsIgnoreCase("-" + Parameters.password))
-			{
-				props.setProperty(Parameters.password, args[++i]);
-			}
-			else if (args[i].equalsIgnoreCase("-" + Parameters.host))
-			{
-				props.setProperty(Parameters.host, args[++i]);
-			}
-			else if (args[i].equalsIgnoreCase("-" + Parameters.port))
-			{
-				props.setProperty(Parameters.port, args[++i]);
-			}
-			else if (args[i].equalsIgnoreCase("-" + Parameters.dbName))
-			{
-				props.setProperty(Parameters.dbName, args[++i]);
-			}
-			else if (args[i].equalsIgnoreCase("-" + Parameters.dbType))
-			{
-				props.setProperty(Parameters.dbType, args[++i]);
-			}
-			else if (args[i].equalsIgnoreCase("-" + Parameters.sessions))
-			{
-				props.setProperty(Parameters.sessions, args[++i]);
-			}
-			else if (args[i].equalsIgnoreCase("-" + Parameters.inputFile))
-			{
-				props.setProperty(Parameters.inputFile, args[++i]);
-			}
-			else if (args[i].equalsIgnoreCase("-" + Parameters.verbose))
-			{
-				props.setProperty(Parameters.verbose, "true");
-			}
-			else if (args[i].equalsIgnoreCase("-" + Parameters.ignoreErrors))
-			{
-				props.setProperty(Parameters.ignoreErrors, "true");
-			}
-			else if (args[i].equalsIgnoreCase("-help") || args[i].equals("--help") || args[i].equals("-h") || args[i].equals("-?"))
-			{
-				printHelp();
-				System.exit(0);
-			}
-			else
-			{
-				Logger.log("Unknown parameter: " + args[i]);
-				Logger.log();
-				printHelp();
-				System.exit(0);
-			}
-		}
-		
+
 		// Set debug flag based on parameter
-		Logger.setVerbose(props.getProperty(Parameters.verbose).equalsIgnoreCase("true"));
+		Logger.setVerbose(Parameters.getInstance().getParameters().getProperty(Parameters.verbose).equalsIgnoreCase("true"));
 		
 		// main try/catch block to avoid exception being thrown out not handled
 		try

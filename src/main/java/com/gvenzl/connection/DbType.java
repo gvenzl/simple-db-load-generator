@@ -29,7 +29,6 @@ package com.gvenzl.connection;
 public enum DbType {
 	ORACLE,
 	MYSQL,
-	NOSQL,
 	NOTSUPPORTED;
 	
 	/**
@@ -42,7 +41,6 @@ public enum DbType {
 		{
 			case "oracle": return ORACLE;
 			case "mysql": return MYSQL;
-			case "nosql": return NOSQL;
 			default: return NOTSUPPORTED;
 		}
 	}

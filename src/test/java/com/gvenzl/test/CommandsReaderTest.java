@@ -71,23 +71,6 @@ public class CommandsReaderTest {
 		}
 	}
 	
-	@Test
-	public void test_parseKVFile() throws Exception {
-		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/kvdata.log");
-		// Amount of KVs in test file
-		final int expectedKVs = 11;
-		ArrayList<Command> kvs = new CommandsReader().parseCommandsFile();
-		
-		Assert.assertEquals(expectedKVs, kvs.size());
-		
-		// Iterate over all objects and check for not null
-		for (Command cmd : kvs)
-		{
-			Assert.assertNotNull(cmd.getKey());
-			Assert.assertNotEquals("<Value format:NONE bytes:>", cmd.getValue().toString());
-		}
-	}
-	
 	@Test (expected = NoFilePassedException.class)
 	public void test_negative_CommandReader_no_file_provided() throws Exception	{
 

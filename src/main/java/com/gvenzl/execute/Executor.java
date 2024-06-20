@@ -27,8 +27,6 @@ import java.util.Properties;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 import oracle.jdbc.pool.OracleDataSource;
-import oracle.kv.FaultException;
-import oracle.kv.KVStoreConfig;
 
 import com.gvenzl.Parameters;
 import com.gvenzl.commands.Command;
@@ -49,12 +47,11 @@ public class Executor
 	/**
 	 * Constructs a new Executor instance
 	 * @throws SQLException Any SQL/DB exception during database connection establishment
-	 * @throws FaultException Any NoSQL DB exception during connecting to the store
 	 */
-	public Executor() throws SQLException, FaultException {
+	public Executor() throws SQLException {
 		try {
 			initializeDataSource();
-		} catch (SQLException | FaultException e) {
+		} catch (SQLException e) {
 			Logger.log("Error during database connection establishment: " + e.getMessage());
 			e.printStackTrace(System.err);
 			throw e;
@@ -96,10 +93,9 @@ public class Executor
 	/**
 	 * This method initializes a new data source to the database
 	 * @throws SQLException Any SQL/DB exception during database connection establishment
-	 * @throws FaultException Any NoSQL DB exception during connecting to the store
 	 */
 	private void initializeDataSource()
-		throws SQLException, FaultException
+		throws SQLException
 	{
 		Properties parameters = Parameters.getInstance().getParameters();
 		String host = parameters.getProperty(Parameters.host);
@@ -143,11 +139,6 @@ public class Executor
 				dataSource = new LoaderDataSource(mysqlds);
 				break;
 			}
-			case NOSQL:
-			{
-				dataSource = new LoaderDataSource(new KVStoreConfig(dbName, host + ":" + port));
-				break;
-			}
 			default:
 			{
 				Logger.log("Wrong database type specified! Cannot establish database connection!");
@@ -177,7 +168,7 @@ public class Executor
 			
 			ExecutorThread[] threads = new ExecutorThread[sessions];
 			try {
-    			for (int iSession=0;iSession<sessions;iSession++)
+    			for (int iSession=0; iSession<sessions; iSession++)
     			{
     				switch (DbType.getType(Parameters.getInstance().getParameters().getProperty(Parameters.dbType))) {
     					case ORACLE:
@@ -185,16 +176,12 @@ public class Executor
     						threads[iSession] = new ExecutorThread(dataSource.getDBConnection(), commands);
     						break;
     					}
-    					case NOSQL: {
-    						threads[iSession] = new ExecutorThread(dataSource.getKVConnection(), commands);
-    						break;
-    					}
     				}
     				
     				threads[iSession].setName("Loader");
     				threads[iSession].start();
     			}
-			} catch (SQLException | FaultException e) {
+			} catch (SQLException e) {
 				Logger.log("Error during database connection establishment: " + e.getMessage());
 				e.printStackTrace(System.err);
 			}

@@ -21,9 +21,6 @@
 
 package com.gvenzl.commands;
 
-import oracle.kv.Key;
-import oracle.kv.Value;
-
 //TODO: Check whether an interface can be used for put and get operations
 
 /**
@@ -34,8 +31,6 @@ import oracle.kv.Value;
 public class Command
 {
 	private String commandString;
-	private Key key;
-	private Value value;
 	private final TYPE type;
 	
 	public enum TYPE { SQL, KV }
@@ -44,12 +39,7 @@ public class Command
 		commandString = command;
 		type = TYPE.SQL;
 	}
-	
-	public Command (Key key, Value val) {
-		this.key = key;
-		this.value = val;
-		type = TYPE.KV;
-	}
+
 	
 	public TYPE getType() {
 		return type;
@@ -57,14 +47,6 @@ public class Command
 
 	public String getCommand () {
 		return commandString;
-	}
-	
-	public Key getKey() {
-		return key;
-	}
-	
-	public Value getValue() {
-		return value;
 	}
 	
 }

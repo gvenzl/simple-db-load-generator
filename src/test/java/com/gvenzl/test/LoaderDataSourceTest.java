@@ -22,7 +22,6 @@
 package com.gvenzl.test;
 
 import oracle.jdbc.pool.OracleDataSource;
-import oracle.kv.KVStoreConfig;
 
 import org.junit.Test;
 
@@ -35,10 +34,5 @@ public class LoaderDataSourceTest {
 	@Test
 	public void test_ConstructorDataSource() throws SQLException {
 		new LoaderDataSource(new OracleDataSource());
-	}
-	
-	@Test
-	public void test_ConstructorKvStoreConfig() {
-		new LoaderDataSource(new KVStoreConfig("",""));
 	}
 }
