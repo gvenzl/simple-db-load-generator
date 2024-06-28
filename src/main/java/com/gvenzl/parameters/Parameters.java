@@ -2,9 +2,9 @@
  * Since: September, 2012
  * Author: gvenzl
  * Name: Parameters.java
- * Description:
+ * Description: The runtime parameters passed on.
  *
- * Copyright 2018 Gerald Venzl
+ * Copyright 2012 Gerald Venzl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 
-package com.gvenzl;
+package com.gvenzl.parameters;
 
 import java.util.Properties;
 
@@ -31,17 +31,6 @@ import java.util.Properties;
  */
 public class Parameters
 {
-	public static final String user = "user";
-	public static final String password = "password";
-	public static final String host = "host";
-	public static final String port = "port";
-	public static final String dbName = "dbName";
-	public static final String dbType = "dbType";
-	public static final String sessions = "sessions";
-	public static final String inputFile = "inputFile";
-	public static final String verbose = "verbose";
-	public static final String ignoreErrors = "ignoreErrors";
-	
 	private final Properties parameters;
 	
 	private static Parameters _instance;
@@ -51,9 +40,9 @@ public class Parameters
 		parameters = new Properties();
 
 		// Set default parameters
-		parameters.setProperty(Parameters.sessions, "1");
-		parameters.setProperty(Parameters.verbose, "false");
-		parameters.setProperty(Parameters.ignoreErrors, "false");
+		parameters.setProperty(Parameter.SESSIONS.toString(), "1");
+		parameters.setProperty(Parameter.VERBOSE.toString(), "false");
+		parameters.setProperty(Parameter.IGNORE_ERRORS.toString(), "false");
 		
 	}
 	
@@ -72,6 +61,15 @@ public class Parameters
 	 */
 	public Properties getParameters() {
 		return parameters;
+	}
+
+	/**
+	 * Returns a parameter value.
+	 * @param key the parameter key to look for
+	 * @return the parameter value
+	 */
+	public static String getParameter(String key) {
+		return getInstance().getParameters().getProperty(key);
 	}
 
 	public void tearDown() {

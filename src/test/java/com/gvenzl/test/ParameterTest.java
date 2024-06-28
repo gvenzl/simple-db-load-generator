@@ -2,9 +2,9 @@
  * Since: September, 2012
  * Author: gvenzl
  * Name: ParameterTest.java
- * Description:
+ * Description: Tests the Parameters class.
  *
- * Copyright 2018 Gerald Venzl
+ * Copyright 2012 Gerald Venzl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,37 +21,25 @@
 
 package com.gvenzl.test;
 
-
+import com.gvenzl.parameters.Parameter;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.gvenzl.Parameters;
+import com.gvenzl.parameters.Parameters;
 
 public class ParameterTest {
 
-	private class MyParams extends Parameters
-	{
-		
-	}
-	
-	@Test
-	public void test_instantiate()
-	{
-		System.out.println("Test Parameters instanziation");
-		new MyParams();
-	}
-	
-	@Test
-	public void test_values()
-	{
-		Assert.assertEquals("dbType", MyParams.dbType);
-		Assert.assertEquals("verbose", Parameters.verbose);
-		Assert.assertEquals("host", Parameters.host);
-		Assert.assertEquals("password", Parameters.password);
-		Assert.assertEquals("port", Parameters.port);
-		Assert.assertEquals("sessions", Parameters.sessions);
-		Assert.assertEquals("dbName", Parameters.dbName);
-		Assert.assertEquals("inputFile", Parameters.inputFile);
-		Assert.assertEquals("user", Parameters.user);
-	}
+    @Test
+    public void test_values()
+    {
+        Assert.assertEquals("dbType", Parameter.DB_TYPE.toString());
+        Assert.assertEquals("verbose", Parameter.VERBOSE.toString());
+        Assert.assertEquals("host", Parameter.HOST.toString());
+        Assert.assertEquals("password", Parameter.PASSWORD.toString());
+        Assert.assertEquals("port", Parameter.PORT.toString());
+        Assert.assertEquals("sessions", Parameter.SESSIONS.toString());
+        Assert.assertEquals("dbName", Parameter.DB_NAME.toString());
+        Assert.assertEquals("inputFile", Parameter.INPUT_FILE.toString());
+        Assert.assertEquals("user", Parameter.USER.toString());
+    }
 }

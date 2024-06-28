@@ -2,9 +2,9 @@
  * Since: September, 2012
  * Author: gvenzl
  * Name: CommandsReader.java
- * Description:
+ * Description: The commands reader.
  *
- * Copyright 2018 Gerald Venzl
+ * Copyright 2012 Gerald Venzl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.gvenzl.Parameters;
+import com.gvenzl.parameters.Parameter;
+import com.gvenzl.parameters.Parameters;
 import com.gvenzl.logger.Logger;
 
 /**
@@ -58,9 +59,6 @@ public class CommandsReader
 	//private static final String ORACLEPATTERN = "";
 	boolean bOracleFile = false;
 
-	/**************************** KV store specific variables *****************************/
-	private static final String KVPATTERN = "((/\\w+)*((/-)|(/))(/\\w+)*)\\|\\|(.+$)";
-	
 	/**************************** TextFile specific variables *****************************/
 	private static final String TEXTFILEPATTERN= "(.+)(;$)";
 	
@@ -72,7 +70,7 @@ public class CommandsReader
 	 */
 	public CommandsReader() throws FileIsDirectoryException, FileNotReadable, NoFilePassedException {
 
-	    String path = Parameters.getInstance().getParameters().getProperty(Parameters.inputFile);
+	    String path = Parameters.getInstance().getParameters().getProperty(Parameter.INPUT_FILE.toString());
 
 	    if (null == path) {
 	        throw new NoFilePassedException("No input file has been provided!");
@@ -128,11 +126,7 @@ public class CommandsReader
 			// Oracle RDBMS RegEx pattern
 			//TODO: Oracle trace file parsing
 			// Pattern oraclePattern = Pattern.compile(ORACLEPATTERN);
-			
-			// Oracle NosQL DB RegEx pattern
-			
-			Pattern kVPattern = Pattern.compile(KVPATTERN);
-			
+
 			// Text file pattern
 			Pattern textFilePattern = Pattern.compile(TEXTFILEPATTERN);
 			
@@ -148,8 +142,6 @@ public class CommandsReader
 				// Matcher oracleMatcher = oraclePattern.matcher(lines[iLineNumber]);
 
 				Matcher textFileMatcher = textFilePattern.matcher(line);
-
-				Matcher kVFileMatcher = kVPattern.matcher(line);
 
 				// MySql line matches
 				if (mySqlMatcher.matches()) {
@@ -170,15 +162,6 @@ public class CommandsReader
 				{
 					bOracleFile = true;
 				}*/
-				/*else if (kVFileMatcher.matches()) {
-					// Extract key
-					Key key = Key.fromString(kVFileMatcher.replaceAll("$1"));
-
-					// Extract value
-					Value value = Value.createValue(kVFileMatcher.replaceAll("$7").getBytes());
-
-					commandsList.add(new Command(key, value));
-				}*/
 				else if (textFileMatcher.matches()) {
 					// Add potential multi lines to SQL command (default empty string)
 					multiLineTextFileCommand = multiLineTextFileCommand + textFileMatcher.replaceAll("$1");
@@ -186,7 +169,8 @@ public class CommandsReader
 					commandsList.add(new Command(multiLineTextFileCommand));
 					// Reset multi line variable
 					multiLineTextFileCommand = "";
-				} else {
+				}
+				else {
 					// Ticket 7: Multi-Line support
 					if (bMySqlFile && bMySqlSupportedCommand) {
 						// Get index of latest added command

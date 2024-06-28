@@ -228,33 +228,39 @@ This produces a packaged jar under `simpleloadgenerator/target/SimpleLoadGenerat
 
 ### 4.1. Set correct Java version
 
-SimpleLoadGenerator runs with Java 7+ and is successfully tested with Java 8 Update 181.
+SimpleLoadGenerator runs with Java 11+ and is successfully tested with Java 17 (17.0.4.1 2022-08-18 LTS).
 
-    export JAVA_HOME=/usr/jdk1.8.0_181
-    export PATH=$JAVA_HOME/bin:$PATH
-    java -version
-      java version "1.8.0_181"
-      Java(TM) SE Runtime Environment (build 1.8.0_181-b13)
-      Java HotSpot(TM) 64-Bit Server VM (build 25.181-b13, mixed mode)
+```bash
+java -version
+java version "17.0.4.1" 2022-08-18 LTS
+Java(TM) SE Runtime Environment (build 17.0.4.1+1-LTS-2)
+Java HotSpot(TM) 64-Bit Server VM (build 17.0.4.1+1-LTS-2, mixed mode, sharing)
+```
 
 ### 4.2. JVM parameters
 
 No special JVM parameters are needed. However, depending on how big the SQL file is, the default max heap size could be insufficient.
 This can be controlled by the -Xmx JVM parameter:
 
-    -Xmx256m  --> Maximum heap memory size of 256MB
-    -Xmx512m  --> Maximum heap memory size of 512MB
-    -Xmx1024m --> Maximum heap memory size of 1024MB
+```
+-Xmx256m  --> Maximum heap memory size of 256MB
+-Xmx512m  --> Maximum heap memory size of 512MB
+-Xmx1024m --> Maximum heap memory size of 1024MB
+```
 
 Example:
 
-    java -Xmx512m -jar SimpleLoadGenerator.jar
+```
+java -Xmx512m -jar SimpleLoadGenerator.jar
+```
 
 ### 4.3. Running SimpleLoadGenerator
 
 The program comes with a default run script (run.sh for Unix, run.bat for Windows)
 
-    ./run.sh
+```shell
+./run.sh
+```
 
 SimpleLoadGenerator provides two ways on how to specify the input parameters.
 This can be done by either a properties file (SimpleLoadGenerator.properties) or via command line.
@@ -265,6 +271,7 @@ It is therefore a good practice to use the properties file rather than the comma
 
 Following parameter need to be set:
 
+```shell
     -user           [username]             The username of the database user  
     -password       [password]             The password of the user  
     -host           [hostname]             Database machine host name or IP address  
@@ -276,15 +283,20 @@ Following parameter need to be set:
     -ignoreErrors                          Specifies whether the application should ignore failing SQL statements and continue with the load  
     -debug                                 Enables debugging output, mostly useful to see which SQL statements got executed when  
     -help                                  Shows the online help only  
+```
 
 Example:
 
-     java -jar SimpleLoadGenerator-*.jar -user scott -password tiger \
+```bash
+java -jar SimpleLoadGenerator-*.jar -user scott -password tiger \
      -host localhost -port 1521 -sid MYDB -databaseType oracle \
      -ignoreErrors -sqlfile ./SQLs.txt -sessions 10 -ignoreErrors
+```
 
 # License
-    Copyright 2018 Gerald Venzl
+
+```
+    Copyright 2024 Gerald Venzl
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -297,3 +309,4 @@ Example:
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+```

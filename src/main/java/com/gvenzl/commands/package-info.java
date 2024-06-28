@@ -1,8 +1,8 @@
 /*
- * Since: October, 2013
+ * Since: June 2024
  * Author: gvenzl
- * Name: LoaderDataSource.java
- * Description: The Data Source holder for the loader.
+ * Name: package-info.java
+ * Description: The package info.
  *
  * Copyright 2024 Gerald Venzl
  *
@@ -19,23 +19,4 @@
  * limitations under the License.
  */
 
-package com.gvenzl.connection;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
-public class LoaderDataSource
-{
-	private DataSource dbDataSource;
-
-	public LoaderDataSource(DataSource dbs) {
-		dbDataSource = dbs;
-	}
-	
-	public Connection getDBConnection() throws SQLException {
-		return dbDataSource.getConnection();
-	}
-
-}
+package com.gvenzl.commands;

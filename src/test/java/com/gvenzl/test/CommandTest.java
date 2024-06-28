@@ -2,9 +2,9 @@
  * Since: October, 2013
  * Author: gvenzl
  * Name: CommandTest.java
- * Description:
+ * Description: Tests the Command class.
  *
- * Copyright 2018 Gerald Venzl
+ * Copyright 2013 Gerald Venzl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

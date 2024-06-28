@@ -2,9 +2,9 @@
  * Since: September, 2012
  * Author: gvenzl
  * Name: CommandsReaderTest.java
- * Description:
+ * Description: Tests the CommandsReader.
  *
- * Copyright 2018 Gerald Venzl
+ * Copyright 2012 Gerald Venzl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,23 +25,24 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.gvenzl.commands.*;
+import com.gvenzl.parameters.Parameter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.gvenzl.Parameters;
+import com.gvenzl.parameters.Parameters;
 
 public class CommandsReaderTest {
 
 	@Test
 	public void test_SqlReader() throws Exception {
-		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/allSqls.sql");
+		Parameters.getInstance().getParameters().setProperty(Parameter.INPUT_FILE.toString(), "src/test/resources/allSqls.sql");
 		new CommandsReader();
 	}
 	
 	@Test
 	public void test_parseTextSqlFile() throws Exception {
-		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/allSqls.sql");
+		Parameters.getInstance().getParameters().setProperty(Parameter.INPUT_FILE.toString(), "src/test/resources/allSqls.sql");
 		// Amount of SQLs in test file
 		final int expectedParsedSQLs = 50;
 		ArrayList<Command> sqls = new CommandsReader().parseCommandsFile();
@@ -57,7 +58,7 @@ public class CommandsReaderTest {
 	
 	@Test
 	public void test_parseMySqlGeneralLogFile() throws Exception {
-		Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources/mysql.general.log");
+		Parameters.getInstance().getParameters().setProperty(Parameter.INPUT_FILE.toString(), "src/test/resources/mysql.general.log");
 		// Amount of valid/supported SQLs in test file
 		final int expectedValidSQLs = 91;
 		ArrayList<Command> sqls = new CommandsReader().parseCommandsFile();
@@ -80,7 +81,7 @@ public class CommandsReaderTest {
 	@Test (expected = FileIsDirectoryException.class)
     public void test_negative_CommandReader_file_is_directory() throws Exception {
 
-        Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, "src/test/resources");
+        Parameters.getInstance().getParameters().setProperty(Parameter.INPUT_FILE.toString(), "src/test/resources");
         new CommandsReader();
     }
 
@@ -96,7 +97,7 @@ public class CommandsReaderTest {
             throw new Exception("Test execution error: Test file cannot be modified!");
         }
 
-        Parameters.getInstance().getParameters().setProperty(Parameters.inputFile, fileName);
+        Parameters.getInstance().getParameters().setProperty(Parameter.INPUT_FILE.toString(), fileName);
         try {
             new CommandsReader();
         } catch (FileNotReadable e) {
