@@ -1,5 +1,9 @@
 SimpleLoadGenerator - Change Log - (c) Gerald Venzl
 
+v3.0.0
+
+* Remove Oracle NoSQL Database support
+
 v2.0.2
 
 Changes:
@@ -28,7 +32,7 @@ Changes:
 This changed for TextFile Multi line support where a line in between a SQL command can be anything.
 It is assumed that:
 a) MySql general log format won't change
-b) The user verified the SQLs before he added them into the plain text files!  
+b) The user verified the SQLs before he added them into the plain text files!
 
 Bugfixes:
 

@@ -2,9 +2,9 @@
  * Since: October, 2013
  * Author: gvenzl
  * Name: Command.java
- * Description:
+ * Description: The call resembling a command.
  *
- * Copyright 2018 Gerald Venzl
+ * Copyright 2013 Gerald Venzl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ package com.gvenzl.commands;
 //TODO: Check whether an interface can be used for put and get operations
 
 /**
- * Holds a command to execute (either SQL or KV)
+ * Holds a command to execute (either SQL)
  * @author gvenzl
  *
  */
@@ -33,7 +33,7 @@ public class Command
 	private String commandString;
 	private final TYPE type;
 	
-	public enum TYPE { SQL, KV }
+	public enum TYPE { SQL }
 
     public Command (String command)	{
 		commandString = command;

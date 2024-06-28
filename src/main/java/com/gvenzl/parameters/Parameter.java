@@ -1,8 +1,8 @@
 /*
- * Since: October, 2013
+ * Since: June 2024
  * Author: gvenzl
- * Name: LoaderDataSource.java
- * Description: The Data Source holder for the loader.
+ * Name: Parameter.java
+ * Description: The parameter enum
  *
  * Copyright 2024 Gerald Venzl
  *
@@ -19,23 +19,28 @@
  * limitations under the License.
  */
 
-package com.gvenzl.connection;
+package com.gvenzl.parameters;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+public enum Parameter {
+    USER("user"),
+    PASSWORD("password"),
+    HOST("host"),
+    PORT("port"),
+    DB_NAME("dbName"),
+    DB_TYPE("dbType"),
+    SESSIONS("sessions"),
+    INPUT_FILE("inputFile"),
+    VERBOSE("verbose"),
+    IGNORE_ERRORS("ignoreErrors");
 
-import javax.sql.DataSource;
+    public final String label;
 
-public class LoaderDataSource
-{
-	private DataSource dbDataSource;
+    private Parameter(String label) {
+        this.label = label;
+    }
 
-	public LoaderDataSource(DataSource dbs) {
-		dbDataSource = dbs;
-	}
-	
-	public Connection getDBConnection() throws SQLException {
-		return dbDataSource.getConnection();
-	}
-
+    @Override
+    public String toString() {
+        return this.label;
+    }
 }

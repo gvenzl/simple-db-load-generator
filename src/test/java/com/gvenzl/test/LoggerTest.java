@@ -2,9 +2,9 @@
  * Since: September, 2012
  * Author: gvenzl
  * Name: LoggerTest.java
- * Description:
+ * Description: Tests the Logger class.
  *
- * Copyright 2018 Gerald Venzl
+ * Copyright 2012 Gerald Venzl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

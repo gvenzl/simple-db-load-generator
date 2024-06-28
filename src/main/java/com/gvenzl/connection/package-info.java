@@ -1,10 +1,10 @@
 /*
- * Since: October, 2013
+ * Since: June 2024
  * Author: gvenzl
  * Name: package-info.java
- * Description:
+ * Description: The package info.
  *
- * Copyright 2018 Gerald Venzl
+ * Copyright 2024 Gerald Venzl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

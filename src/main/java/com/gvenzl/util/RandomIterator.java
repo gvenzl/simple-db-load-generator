@@ -2,9 +2,9 @@
  * Since: September, 2012
  * Author: gvenzl
  * Name: RandomIterator.java
- * Description:
+ * Description: A random iterator over the commands.
  *
- * Copyright 2018 Gerald Venzl
+ * Copyright 2012 Gerald Venzl
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,50 +34,50 @@ import java.util.Random;
  */
 public class RandomIterator<E> implements Iterator<E>
 {
-	private final ArrayList<Integer> index;
-	private final List<E> list;
-	private final Random random;
-	
-	/**
-	 *  Generates a new RandomIterator over passed on list.
-	 */
-	public RandomIterator(List<E> l)
-	{
-		list = l;
-		random = new Random();
-		index = new ArrayList<>();
-		
-		// Build HashSet with values
-		for (int i=0;i<list.size();i++)
-		{
-			index.add(i);
-		}
-	}
+    private final ArrayList<Integer> index;
+    private final List<E> list;
+    private final Random random;
 
-	@Override
-	public boolean hasNext()
-	{
-		// as long as there are still values in the indexSet there are still values to iterate over
-		return (index.size() > 0);
-	}
+    /**
+     *  Generates a new RandomIterator over passed on list.
+     */
+    public RandomIterator(List<E> l)
+    {
+        list = l;
+        random = new Random();
+        index = new ArrayList<>();
 
-	@Override
-	public E next() throws NoSuchElementException
-	{
-		if (!hasNext())
-		{
-			throw new NoSuchElementException();
-		}
-		
-		Integer idx = random.nextInt(index.size());
-		E obj = list.get(index.get(idx));
-		index.remove(idx.intValue());
-		return obj;
-	}
+        // Build HashSet with values
+        for (int i=0;i<list.size();i++)
+        {
+            index.add(i);
+        }
+    }
 
-	@Override
-	public void remove()
-	{
-		index.remove(index.size()-1);
-	}
+    @Override
+    public boolean hasNext()
+    {
+        // as long as there are still values in the indexSet there are still values to iterate over
+        return (!index.isEmpty());
+    }
+
+    @Override
+    public E next() throws NoSuchElementException
+    {
+        if (!hasNext())
+        {
+            throw new NoSuchElementException();
+        }
+
+        int idx = random.nextInt(index.size());
+        E obj = list.get(index.get(idx));
+        index.remove(idx);
+        return obj;
+    }
+
+    @Override
+    public void remove()
+    {
+        index.remove(index.size()-1);
+    }
 }
