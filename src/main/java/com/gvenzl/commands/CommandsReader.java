@@ -190,7 +190,7 @@ public class CommandsReader
 			}
 
 			Logger.log("Lines parsed: " + lines.length);
-			Logger.log("Amount of valid commands parsed: " + commandsList.size());
+			Logger.log("Number of valid commands parsed: " + commandsList.size());
 		}
 		catch (IOException e)
 		{

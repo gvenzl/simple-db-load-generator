@@ -150,8 +150,9 @@ public class SimpleLoadGenerator
                 System.exit(0);
             }
         }
-
-        // Parameters were passed on, properties file ignored -> read passed on parameters
+        else {
+            parseArgs(args);
+        }
 
         // Set debug flag based on parameter
         Logger.setVerbose(Parameters.getInstance().getParameters().getProperty(Parameter.VERBOSE.toString()).equalsIgnoreCase("true"));

@@ -172,7 +172,7 @@ public class Executor
 
             ExecutorThread[] threads = new ExecutorThread[sessions];
             try {
-                for (int iSession=1; iSession <= sessions; iSession++)
+                for (int iSession=0; iSession < sessions; iSession++)
                 {
                     switch (DbType.getType(Parameters.getInstance().getParameters().getProperty(Parameter.DB_TYPE.toString()))) {
                         case ORACLE:
