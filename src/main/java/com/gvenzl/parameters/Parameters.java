@@ -31,48 +31,48 @@ import java.util.Properties;
  */
 public class Parameters
 {
-	private final Properties parameters;
-	
-	private static Parameters _instance;
-	
-	protected Parameters() {
-		// Initialize application parameter properties
-		parameters = new Properties();
+    private final Properties parameters;
 
-		// Set default parameters
-		parameters.setProperty(Parameter.SESSIONS.toString(), "1");
-		parameters.setProperty(Parameter.VERBOSE.toString(), "false");
-		parameters.setProperty(Parameter.IGNORE_ERRORS.toString(), "false");
-		
-	}
-	
-	public static Parameters getInstance() {
+    private static Parameters _instance;
 
-	    if (null == _instance) {
-	        _instance = new Parameters();
+    protected Parameters() {
+        // Initialize application parameter properties
+        parameters = new Properties();
+
+        // Set default parameters
+        parameters.setProperty(Parameter.SESSIONS.toString(), "1");
+        parameters.setProperty(Parameter.VERBOSE.toString(), "false");
+        parameters.setProperty(Parameter.IGNORE_ERRORS.toString(), "false");
+
+    }
+
+    public static Parameters getInstance() {
+
+        if (null == _instance) {
+            _instance = new Parameters();
         }
 
-		return _instance;
-	}
+        return _instance;
+    }
 
-	/**
-	 * Get the parameter names and values
-	 * @return {@link Properties} containing the parameter names and values
-	 */
-	public Properties getParameters() {
-		return parameters;
-	}
+    /**
+     * Get the parameter names and values
+     * @return {@link Properties} containing the parameter names and values
+     */
+    public Properties getParameters() {
+        return parameters;
+    }
 
-	/**
-	 * Returns a parameter value.
-	 * @param key the parameter key to look for
-	 * @return the parameter value
-	 */
-	public static String getParameter(String key) {
-		return getInstance().getParameters().getProperty(key);
-	}
+    /**
+     * Returns a parameter value.
+     * @param key the parameter key to look for
+     * @return the parameter value
+     */
+    public static String getParameter(String key) {
+        return getInstance().getParameters().getProperty(key);
+    }
 
-	public void tearDown() {
-	    _instance = null;
+    public void tearDown() {
+        _instance = null;
     }
 }
