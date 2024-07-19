@@ -1,7 +1,7 @@
 /*
  * Since: September, 2012
  * Author: gvenzl
- * Name: SimpleLoadGenerator.java
+ * Name: SimpleDBLoadGenerator.java
  * Description: The main class
  *
  * Copyright 2024 Gerald Venzl
@@ -32,18 +32,18 @@ import com.gvenzl.parameters.Parameter;
 import com.gvenzl.parameters.Parameters;
 
 /**
- * The SimpleLoadGenerator class is the main class and entry point for the generator tool.
+ * The SimpleDBLoadGenerator class is the main class and entry point for the generator tool.
  * It gets the required parameters to test and prints the online help.
  * @author gvenzl
  */
-public class SimpleLoadGenerator
+public class SimpleDBLoadGenerator
 {
     /**
      * Print the online help into stdout
      */
     public static void printHelp()
     {
-        Logger.log("Usage: java -jar SimpleLoadGenerator.jar|com.gvenzl.SimpleLoadGenerator -user [username] -password [password] -host [host] -port [port] -dbName [dbName] -dbType [dbType] -sessions [number of sessions] -inputFile [inputFile] -ignoreErrors -verbose -help|-h|--help|-?");
+        Logger.log("Usage: java -jar SimpleDBLoadGenerator.jar|com.gvenzl.SimpleDBLoadGenerator -user [username] -password [password] -host [host] -port [port] -dbName [dbName] -dbType [dbType] -sessions [number of sessions] -inputFile [inputFile] -ignoreErrors -verbose -help|-h|--help|-?");
         Logger.log("");
         Logger.log("[-user]			The database username");
         Logger.log("[-password]		The password of the database user");
@@ -57,9 +57,9 @@ public class SimpleLoadGenerator
         Logger.log("[-verbose]		Enables verbose output");
         Logger.log("[-help|--help|-h|-?]	Display this help");
         Logger.log();
-        Logger.log("By default, if not parameters have been provided, SimpleLoadGenerator will look for a properties file called 'SimpleLoadGenerator.properties'.");
+        Logger.log("By default, if not parameters have been provided, SimpleDBLoadGenerator will look for a properties file called 'SimpleDBLoadGenerator.properties'.");
         Logger.log("Each SQL statement in the plain text sql file has to be delimited by \";\\n\".");
-        Logger.log("SimpleLoadGenerator does not execute an implicit commit. If you want to execute DML statements you will have to include a COMMIT statement.");
+        Logger.log("SimpleDBLoadGenerator does not execute an implicit commit. If you want to execute DML statements you will have to include a COMMIT statement.");
     }
 
     /**
@@ -123,7 +123,7 @@ public class SimpleLoadGenerator
         // No parameters passed, read parameters from properties file
         // Do not attempt to read the properties file if any parameter has been passed via the CLI
         if (args.length == 0) {
-            String propertiesFileName = SimpleLoadGenerator.class.getSimpleName() + ".properties";
+            String propertiesFileName = SimpleDBLoadGenerator.class.getSimpleName() + ".properties";
 
             try(FileInputStream fis = new FileInputStream(propertiesFileName)) {
                 Parameters.getInstance().getParameters().load(fis);
@@ -131,7 +131,7 @@ public class SimpleLoadGenerator
             catch (IOException ioEx) {
                 // Properties file cannot be found!
                 if (ioEx instanceof FileNotFoundException) {
-                    Logger.log("Properties file \"" + propertiesFileName + "\" was not found in current working directory (" + System.getProperties().getProperty("user.dir") + ")");
+                    Logger.log(new String("Properties file \"%s\" was not found in current working directory (%s)").formatted(propertiesFileName, System.getProperties().getProperty("user.dir")));
                     Logger.log("Please use command line parameters or define a properties file.");
                     Logger.log();
 

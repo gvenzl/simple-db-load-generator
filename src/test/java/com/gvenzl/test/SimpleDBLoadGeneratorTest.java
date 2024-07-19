@@ -1,7 +1,7 @@
 /*
  * Since: September, 2012
  * Author: gvenzl
- * Name: SimpleLoadGeneratorTest.java
+ * Name: SimpleDBLoadGeneratorTest.java
  * Description:
  *
  * Copyright 2012 Gerald Venzl
@@ -23,19 +23,19 @@ package com.gvenzl.test;
 
 import org.junit.Test;
 
-import com.gvenzl.SimpleLoadGenerator;
+import com.gvenzl.SimpleDBLoadGenerator;
 
-public class SimpleLoadGeneratorTest {
+public class SimpleDBLoadGeneratorTest {
 
 	@Test
 	public void test_printHelp() {
 		System.out.println("Test online help");
-		SimpleLoadGenerator.printHelp();
+		SimpleDBLoadGenerator.printHelp();
 	}
 	
 	@Test
 	public void test_handleException() {
 		System.out.println("Test exception handling of non-caught exceptions");
-		SimpleLoadGenerator.handleExceptions(new RuntimeException());
+		SimpleDBLoadGenerator.handleExceptions(new RuntimeException());
 	}
 }

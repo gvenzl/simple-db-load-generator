@@ -1,4 +1,4 @@
-SimpleLoadGenerator - Change Log - (c) Gerald Venzl
+SimpleDBLoadGenerator - Change Log - (c) Gerald Venzl
 
 v3.0.0
 

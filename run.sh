@@ -26,4 +26,4 @@ export JAVA_HOME
 PATH=$JAVA_HOME/bin:$PATH
 export PATH
 
-java -jar ./SimpleLoadGenerator-*.jar $@
+java -jar ./SimpleDBLoadGenerator-*.jar $@
