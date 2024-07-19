@@ -57,7 +57,7 @@ public class CommandsReader
     /**************************** ORACLE specific variables *******************************/
     //TODO: Oracle trace file parsing
     //private static final String ORACLEPATTERN = "";
-    boolean bOracleFile = false;
+    //boolean bOracleFile = false;
 
     /**************************** TextFile specific variables *****************************/
     private static final String TEXT_FILE_PATTERN = "(.+)(;$)";
@@ -81,11 +81,11 @@ public class CommandsReader
 
         // Multiple files are not supported yet, therefore no directory can be specified!
         if (Files.isDirectory(commandsFilePath)) {
-            throw new FileIsDirectoryException("The passed file " + commandsFilePath.toAbsolutePath().toString() + " is a directory!");
+            throw new FileIsDirectoryException(String.format("File %s is a directory!", commandsFilePath.toAbsolutePath()));
         }
         // File not readable
         else if (!Files.isReadable(commandsFilePath)) {
-            throw new FileNotReadable("File " + commandsFilePath.toAbsolutePath().toString() + " is not readable!");
+            throw new FileNotReadable(String.format("File %s is not readable!", commandsFilePath.toAbsolutePath()));
         }
 
         this.commandsList = new ArrayList<>();

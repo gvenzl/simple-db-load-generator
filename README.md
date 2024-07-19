@@ -202,16 +202,18 @@ USE
 SimpleDBLoadGenerator is a Maven project. The Maven `pom.xml` file has the following dependencies declared:
 
 ```xml
-<dependency>
-    <groupId>com.oracle.database.jdbc</groupId>
-    <artifactId>ojdbc11</artifactId>
-    <version>23.4.0.24.05</version>
-</dependency>
-<dependency>
-    <groupId>com.mysql</groupId>
-    <artifactId>mysql-connector-j</artifactId>
-    <version>8.0.33</version>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>com.oracle.database.jdbc</groupId>
+        <artifactId>ojdbc11</artifactId>
+        <version>23.4.0.24.05</version>
+    </dependency>
+    <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <version>8.4.0</version>
+    </dependency>
+</dependencies>
 ```
 
 You can build SimpleDBLoadGenerator by simply running:

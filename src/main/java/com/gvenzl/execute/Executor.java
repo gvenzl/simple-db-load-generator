@@ -96,7 +96,7 @@ public class Executor {
         Logger.log("Database type: " + dbType);
 
         LoaderDataSource dataSource;
-        String url = "";
+        String url;
 
         // Creating the datasource to the database. Extend this if you need to add additional support!
         switch (dbType) {
@@ -125,7 +125,7 @@ public class Executor {
             }
             default: {
                 Logger.log("Wrong database type specified, cannot establish database connection!");
-                throw new RuntimeException("Wrong database type specified! " + Parameters.getParameter(Parameter.DB_TYPE.toString()) + " is not supported!");
+                throw new RuntimeException(String.format("Wrong database type specified! %s is not supported!", Parameters.getParameter(Parameter.DB_TYPE.toString())));
             }
         }
 

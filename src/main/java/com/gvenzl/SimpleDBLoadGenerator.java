@@ -70,36 +70,36 @@ public class SimpleDBLoadGenerator
 
         Properties params = Parameters.getInstance().getParameters();
 
-        for (int i=0;i<args.length;i++) {
+        for (int i=0; i<args.length; i++) {
 
-            if (args[i].equalsIgnoreCase("-" + Parameter.USER.toString())) {
+            if (args[i].equalsIgnoreCase("-" + Parameter.USER)) {
                 params.setProperty(Parameter.USER.toString(), args[++i]);
             }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.PASSWORD.toString())) {
+            else if (args[i].equalsIgnoreCase("-" + Parameter.PASSWORD)) {
                 params.setProperty(Parameter.PASSWORD.toString(), args[++i]);
             }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.HOST.toString())) {
+            else if (args[i].equalsIgnoreCase("-" + Parameter.HOST)) {
                 params.setProperty(Parameter.HOST.toString(), args[++i]);
             }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.PORT.toString())) {
+            else if (args[i].equalsIgnoreCase("-" + Parameter.PORT)) {
                 params.setProperty(Parameter.PORT.toString(), args[++i]);
             }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.DB_NAME.toString())) {
+            else if (args[i].equalsIgnoreCase("-" + Parameter.DB_NAME)) {
                 params.setProperty(Parameter.DB_NAME.toString(), args[++i]);
             }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.DB_TYPE.toString())) {
+            else if (args[i].equalsIgnoreCase("-" + Parameter.DB_TYPE)) {
                 params.setProperty(Parameter.DB_TYPE.toString(), args[++i]);
             }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.SESSIONS.toString())) {
+            else if (args[i].equalsIgnoreCase("-" + Parameter.SESSIONS)) {
                 params.setProperty(Parameter.SESSIONS.toString(), args[++i]);
             }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.INPUT_FILE.toString())) {
+            else if (args[i].equalsIgnoreCase("-" + Parameter.INPUT_FILE)) {
                 params.setProperty(Parameter.INPUT_FILE.toString(), args[++i]);
             }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.VERBOSE.toString())) {
+            else if (args[i].equalsIgnoreCase("-" + Parameter.VERBOSE)) {
                 params.setProperty(Parameter.VERBOSE.toString(), "true");
             }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.IGNORE_ERRORS.toString())) {
+            else if (args[i].equalsIgnoreCase("-" + Parameter.IGNORE_ERRORS)) {
                 params.setProperty(Parameter.IGNORE_ERRORS.toString(), "true");
             }
             else if (args[i].equalsIgnoreCase("-help") || args[i].equals("--help") || args[i].equals("-h") || args[i].equals("-?")) {
@@ -131,7 +131,7 @@ public class SimpleDBLoadGenerator
             catch (IOException ioEx) {
                 // Properties file cannot be found!
                 if (ioEx instanceof FileNotFoundException) {
-                    Logger.log(new String("Properties file \"%s\" was not found in current working directory (%s)").formatted(propertiesFileName, System.getProperties().getProperty("user.dir")));
+                    Logger.log(String.format("Properties file \"%s\" was not found in current working directory (%s)", propertiesFileName, System.getProperties().getProperty("user.dir")));
                     Logger.log("Please use command line parameters or define a properties file.");
                     Logger.log();
 
@@ -144,7 +144,7 @@ public class SimpleDBLoadGenerator
                     System.exit(0);
                 }
             }
-            catch (IllegalArgumentException illArgEx){
+            catch (IllegalArgumentException illArgEx) {
                 Logger.log("The properties file contains illegal characters!");
                 handleExceptions(illArgEx);
                 System.exit(0);
