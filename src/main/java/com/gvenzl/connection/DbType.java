@@ -37,11 +37,10 @@ public enum DbType {
 	 * @return The database type or null if no appropriate type could be found
 	 */
 	public static DbType getType(String type) {
-		switch (type)
-		{
-			case "oracle": return ORACLE;
-			case "mysql": return MYSQL;
-			default: return NOTSUPPORTED;
-		}
+        return switch (type) {
+            case "oracle" -> ORACLE;
+            case "mysql" -> MYSQL;
+            default -> NOTSUPPORTED;
+        };
 	}
 }

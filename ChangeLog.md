@@ -2,8 +2,9 @@
 
 ## v3.0.0
 
-* Remove Oracle NoSQL Database support
+* Provide default values for command line parameters
 * Support comments (`--`) in SQL file
+* Remove Oracle NoSQL Database support
 * Migration to Java 17
 
 ## v2.0.2

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import com.gvenzl.execute.Executor;
+import com.gvenzl.connection.DbType;
 import com.gvenzl.logger.Logger;
 import com.gvenzl.parameters.Parameter;
 import com.gvenzl.parameters.Parameters;
@@ -47,13 +48,13 @@ public class SimpleDBLoadGenerator
         Logger.log("");
         Logger.log("[-user]			The database username");
         Logger.log("[-password]		The password of the database user");
-        Logger.log("[-host]			Database machine host name");
-        Logger.log("[-port]			Listener port of the database listener");
+        Logger.log("[-host]			Database machine host name (default: localhost)");
+        Logger.log("[-port]			Port of the database (default: oracle=1521 | mysql=3306)");
         Logger.log("[-dbName]		Database name/service name");
-        Logger.log("[-dbType]		Database type: oracle|mysql");
+        Logger.log("[-dbType]		Database type: oracle|mysql (default: oracle");
         Logger.log("[-sessions]		Number of sessions that should execute the queries");
         Logger.log("[-inputFile]		Path to file containing the commands (e.g. SQL statements) to execute");
-        Logger.log("[-ignoreErrors]		Ignore errors caused by SQL statements and continue executing");
+        Logger.log("[-ignoreErrors]		Ignore errors caused by SQL statements and continue executing (default: false)");
         Logger.log("[-verbose]		Enables verbose output");
         Logger.log("[-help|--help|-h|-?]	Display this help");
         Logger.log();
@@ -70,48 +71,64 @@ public class SimpleDBLoadGenerator
 
         Properties params = Parameters.getInstance().getParameters();
 
-        for (int i=0; i<args.length; i++) {
+        for (int i = 0; i < args.length; i++) {
 
             if (args[i].equalsIgnoreCase("-" + Parameter.USER)) {
                 params.setProperty(Parameter.USER.toString(), args[++i]);
-            }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.PASSWORD)) {
+            } else if (args[i].equalsIgnoreCase("-" + Parameter.PASSWORD)) {
                 params.setProperty(Parameter.PASSWORD.toString(), args[++i]);
-            }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.HOST)) {
+            } else if (args[i].equalsIgnoreCase("-" + Parameter.HOST)) {
                 params.setProperty(Parameter.HOST.toString(), args[++i]);
-            }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.PORT)) {
+            } else if (args[i].equalsIgnoreCase("-" + Parameter.PORT)) {
                 params.setProperty(Parameter.PORT.toString(), args[++i]);
-            }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.DB_NAME)) {
+            } else if (args[i].equalsIgnoreCase("-" + Parameter.DB_NAME)) {
                 params.setProperty(Parameter.DB_NAME.toString(), args[++i]);
-            }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.DB_TYPE)) {
+            } else if (args[i].equalsIgnoreCase("-" + Parameter.DB_TYPE)) {
                 params.setProperty(Parameter.DB_TYPE.toString(), args[++i]);
-            }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.SESSIONS)) {
+            } else if (args[i].equalsIgnoreCase("-" + Parameter.SESSIONS)) {
                 params.setProperty(Parameter.SESSIONS.toString(), args[++i]);
-            }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.INPUT_FILE)) {
+            } else if (args[i].equalsIgnoreCase("-" + Parameter.INPUT_FILE)) {
                 params.setProperty(Parameter.INPUT_FILE.toString(), args[++i]);
-            }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.VERBOSE)) {
+            } else if (args[i].equalsIgnoreCase("-" + Parameter.VERBOSE)) {
                 params.setProperty(Parameter.VERBOSE.toString(), "true");
-            }
-            else if (args[i].equalsIgnoreCase("-" + Parameter.IGNORE_ERRORS)) {
+            } else if (args[i].equalsIgnoreCase("-" + Parameter.IGNORE_ERRORS)) {
                 params.setProperty(Parameter.IGNORE_ERRORS.toString(), "true");
-            }
-            else if (args[i].equalsIgnoreCase("-help") || args[i].equals("--help") || args[i].equals("-h") || args[i].equals("-?")) {
+            } else if (args[i].equalsIgnoreCase("-help") || args[i].equals("--help") || args[i].equals("-h") || args[i].equals("-?")) {
                 printHelp();
                 System.exit(0);
-            }
-            else {
+            } else {
                 Logger.log("Unknown parameter: " + args[i]);
                 Logger.log();
                 printHelp();
                 System.exit(0);
             }
+        }
+    }
+
+    private static void setDefaultParamValues() {
+
+        Properties params = Parameters.getInstance().getParameters();
+
+        // Database type
+        if (null == params.getProperty(Parameter.DB_TYPE.toString())) {
+            params.setProperty(Parameter.DB_TYPE.toString(), "oracle");
+        }
+
+        // Database port
+        if (null == params.getProperty(Parameter.PORT.toString())) {
+
+            String port = "";
+            if (params.getProperty(Parameter.DB_TYPE.toString()).equalsIgnoreCase(DbType.ORACLE.toString())) {
+                params.setProperty(Parameter.PORT.toString(), "1521");
+            }
+            else if (params.getProperty(Parameter.DB_TYPE.toString()).equalsIgnoreCase(DbType.MYSQL.toString())) {
+                params.setProperty(Parameter.PORT.toString(), "3306");
+            }
+        }
+
+        // Host name
+        if (null == params.getProperty(Parameter.HOST.toString())) {
+            params.setProperty(Parameter.HOST.toString(), "localhost");
         }
     }
 
@@ -123,8 +140,8 @@ public class SimpleDBLoadGenerator
         // No parameters passed, read parameters from properties file
         // Do not attempt to read the properties file if any parameter has been passed via the CLI
         if (args.length == 0) {
-            String propertiesFileName = SimpleDBLoadGenerator.class.getSimpleName() + ".properties";
 
+            String propertiesFileName = SimpleDBLoadGenerator.class.getSimpleName() + ".properties";
             try(FileInputStream fis = new FileInputStream(propertiesFileName)) {
                 Parameters.getInstance().getParameters().load(fis);
             }
@@ -153,6 +170,8 @@ public class SimpleDBLoadGenerator
         else {
             parseArgs(args);
         }
+
+        setDefaultParamValues();
 
         // Set debug flag based on parameter
         Logger.setVerbose(Parameters.getInstance().getParameters().getProperty(Parameter.VERBOSE.toString()).equalsIgnoreCase("true"));
