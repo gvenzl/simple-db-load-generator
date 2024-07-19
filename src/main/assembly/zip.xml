@@ -34,7 +34,7 @@
                 <include>${project.basedir}/run.sh</include>
                 <include>${project.basedir}/README.md</include>
                 <include>${project.basedir}/LICENSE</include>
-                <include>${project.basedir}/ChangeLog.txt</include>
+                <include>${project.basedir}/ChangeLog.md</include>
             </includes>
         </fileSet>
     </fileSets>
@@ -46,7 +46,7 @@
     </files>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>lib</outputDirectory>
+            <outputDirectory>libs</outputDirectory>
             <excludes>
                 <exclude>${project.groupId}:${project.artifactId}:jar:*</exclude>
             </excludes>
