@@ -119,11 +119,12 @@ public class SimpleDBLoadGenerator
 
             String port = "";
             if (params.getProperty(Parameter.DB_TYPE.toString()).equalsIgnoreCase(DbType.ORACLE.toString())) {
-                params.setProperty(Parameter.PORT.toString(), "1521");
+                port = "1521";
             }
             else if (params.getProperty(Parameter.DB_TYPE.toString()).equalsIgnoreCase(DbType.MYSQL.toString())) {
-                params.setProperty(Parameter.PORT.toString(), "3306");
+                port = "3306";
             }
+            params.setProperty(Parameter.PORT.toString(), port);
         }
 
         // Host name
