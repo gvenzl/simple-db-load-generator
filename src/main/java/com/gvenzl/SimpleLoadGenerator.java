@@ -158,13 +158,11 @@ public class SimpleLoadGenerator
         Logger.setVerbose(Parameters.getInstance().getParameters().getProperty(Parameter.VERBOSE.toString()).equalsIgnoreCase("true"));
 
         // main try/catch block to avoid exception being thrown out not handled
-        try
-        {
+        try {
             // Create executor and run tests
             new Executor().runTests();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             handleExceptions(e);
         }
     }
@@ -173,11 +171,9 @@ public class SimpleLoadGenerator
      * This function sits on the top level and catches all exceptions and prints out proper error messages
      * @param e The exception that comes from somewhere within the code
      */
-    public static void handleExceptions(Exception e)
-    {
-        Logger.log("Application error: " + e.getMessage());
-        if (e.getCause() != null)
-        {
+    public static void handleExceptions(Exception e) {
+        Logger.log("Error: " + e.getMessage());
+        if (e.getCause() != null) {
             Logger.log("Caused by: " + e.getCause().toString());
         }
         e.printStackTrace(System.err);

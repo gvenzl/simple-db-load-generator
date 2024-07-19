@@ -41,30 +41,14 @@ import com.gvenzl.logger.Logger;
  * and start/stop the test execution threads.
  * @author gvenzl
  */
-public class Executor
-{
-    private LoaderDataSource dataSource;
+public class Executor {
 
-    /**
-     * Constructs a new Executor instance
-     * @throws SQLException Any SQL/DB exception during database connection establishment
-     */
-    public Executor() throws SQLException {
-        try {
-            initializeDataSource();
-        }
-        catch (SQLException e) {
-            Logger.log("Error during database connection establishment: " + e.getMessage());
-            e.printStackTrace(System.err);
-            throw e;
-        }
-    }
     /**
      * Inner class for ShutDown hook. Needed to stop all threads gracefully
      * @author gvenzl
      *
      */
-    private class ShutDown extends Thread
+    private static class ShutDown extends Thread
     {
         final ExecutorThread[] threadsToStop;
 
@@ -97,9 +81,8 @@ public class Executor
      * This method initializes a new data source to the database
      * @throws SQLException Any SQL/DB exception during database connection establishment
      */
-    private void initializeDataSource()
-            throws SQLException
-    {
+    private LoaderDataSource initializeDataSource() throws SQLException  {
+
         String host = Parameters.getParameter(Parameter.HOST.toString());
         String port = Parameters.getParameter(Parameter.PORT.toString());
 
@@ -116,10 +99,8 @@ public class Executor
         String url = "";
 
         // Creating the datasource to the database. Extend this if you need to add additional support!
-        switch (dbType)
-        {
-            case ORACLE:
-            {
+        switch (dbType) {
+            case ORACLE: {
                 OracleDataSource ods = new OracleDataSource();
                 url = String.format("jdbc:oracle:thin:%s/%s@//%s:%s/%s", user, password, host, port, dbName);
                 ods.setURL(url);
@@ -131,8 +112,7 @@ public class Executor
                 dataSource = new LoaderDataSource(ods);
                 break;
             }
-            case MYSQL:
-            {
+            case MYSQL: {
                 MysqlDataSource mysqlds = new MysqlDataSource();
                 url = String.format("jdbc:mysql://%s:%s/%s?user=%s&password=%s", host, port, dbName, user, password);
                 mysqlds.setURL(url);
@@ -143,8 +123,7 @@ public class Executor
                 dataSource = new LoaderDataSource(mysqlds);
                 break;
             }
-            default:
-            {
+            default: {
                 Logger.log("Wrong database type specified, cannot establish database connection!");
                 throw new RuntimeException("Wrong database type specified! " + Parameters.getParameter(Parameter.DB_TYPE.toString()) + " is not supported!");
             }
@@ -152,7 +131,7 @@ public class Executor
 
         Logger.logVerbose("URL used to connect: " + url);
 
-        this.dataSource = dataSource;
+        return dataSource;
     }
 
     /**
@@ -163,17 +142,18 @@ public class Executor
         // Parse all SQLs into a ArrayList
         ArrayList<Command> commands = new CommandsReader().parseCommandsFile();
 
+        LoaderDataSource dataSource = initializeDataSource();
+
         // Only execute tests if LinkedList is filled (not filled if parse error occurred)
-        if (!commands.isEmpty())
-        {
+        if (!commands.isEmpty()) {
+
             // Start and execute load threads
             int sessions = Integer.parseInt(Parameters.getInstance().getParameters().getProperty(Parameter.SESSIONS.toString()));
             Logger.log("Starting concurrent sessions: " + sessions);
 
             ExecutorThread[] threads = new ExecutorThread[sessions];
             try {
-                for (int iSession=0; iSession < sessions; iSession++)
-                {
+                for (int iSession=0; iSession < sessions; iSession++) {
                     switch (DbType.getType(Parameters.getInstance().getParameters().getProperty(Parameter.DB_TYPE.toString()))) {
                         case ORACLE:
                         case MYSQL: {
